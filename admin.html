@@ -205,7 +205,7 @@ th{
 <h2>🔐 Admin Login</h2>
 <p>Enter password</p>
 
-<input type="password" id="password" placeholder="Password">
+<input type="password" id="password" placeholder="Admin Password">
 
 <button onclick="login()">Login</button>
 
@@ -311,114 +311,115 @@ th{
 
 /* ===== CONFIG ===== */
 
-const API = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
+const PASSWORD = "report0816"; // change if needed
 
-const PASSWORD = "report0816"; // Change if needed
+// Your Sheet ID
+const SHEET_ID = "1_7g_XuKW0TnjV2no4it9lrljoViP-ID1YlsQvsKQs2M";
 
 
-/* ===== LOGIN ===== */
+// ===== LOGIN =====
 
 function login(){
-
   let pass = document.getElementById("password").value;
-
   if(pass === PASSWORD){
-
     localStorage.setItem("admin","true");
-
     startLoading();
-
-  }else{
-
+  } else {
     document.getElementById("error").style.display="block";
-
   }
 }
 
-
 function logout(){
-
   localStorage.removeItem("admin");
   location.reload();
-
 }
 
 
-/* ===== LOADING ===== */
+// ===== LOADING =====
 
 function startLoading(){
-
   document.getElementById("loginPage").style.display="none";
   document.getElementById("loadingScreen").style.display="flex";
 
-  let p = 0;
-
+  let p=0;
   let timer = setInterval(()=>{
-
     p++;
-
     document.getElementById("percent").innerText = p + "%";
-
     if(p>=100){
-
       clearInterval(timer);
-
       document.getElementById("loadingScreen").style.display="none";
-
       loadDashboard();
-
     }
-
   },20);
-
 }
 
 
-/* ===== DASHBOARD ===== */
+// ===== LOAD DATA =====
 
 function loadDashboard(){
 
   document.getElementById("dashboard").classList.remove("hidden");
 
-  fetch(API+"?action=read")
-  .then(r=>r.json())
-  .then(data=>{
+  let url = 
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-    fillTable(data);
-    fillStats(data);
+  fetch(url)
+    .then(res => res.text())
+    .then(text => {
 
-  })
-  .catch(()=>{
-    alert("Failed to load data");
-  });
+      // parse JSON out of response
+      let json = JSON.parse(
+        text.replace("/*O_o*/","")
+            .replace("google.visualization.Query.setResponse(","")
+            .slice(0,-2)
+      );
+
+      let table = json.table;
+      let cols = table.cols.map(c=>c.label.toLowerCase());
+      let rows = table.rows.map(r=>{
+        return r.c.map(x=>x?x.v:"");
+      });
+
+      let data = rows.map(r=>{
+        let obj = {};
+        cols.forEach((k,i)=>obj[k]=r[i]);
+        return obj;
+      });
+
+      fillTable(data);
+      fillStats(data);
+
+    })
+    .catch(()=>{
+      alert("Failed to load sheet data");
+    });
 
 }
 
 
-/* ===== TABLE ===== */
+// ===== TABLE =====
 
 function fillTable(data){
 
   let body = document.querySelector("#reportTable tbody");
-
   body.innerHTML = "";
 
-  data.forEach(row=>{
+  data.forEach(r=>{
 
     let tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${row.type}</td>
-      <td>${row.name}</td>
-      <td>${row.table}</td>
-      <td>${row.work}</td>
-      <td>${row.date}</td>
-      <td>${row.time}</td>
-      <td>${row.cleaned}</td>
-      <td>${row.cctv}</td>
-      <td>${row.waste}</td>
-      <td>${row.internet}</td>
-      <td>${row.timestamp}</td>
+      <td>${r.type||""}</td>
+      <td>${r.name||""}</td>
+      <td>${r.table||""}</td>
+      <td>${r.work||""}</td>
+      <td>${r.date||""}</td>
+      <td>${r.time||""}</td>
+      <td>${r.cleaned||""}</td>
+      <td>${r.cctv||""}</td>
+      <td>${r.waste||""}</td>
+      <td>${r.internet||""}</td>
+      <td>${r.timestamp||""}</td>
     `;
 
     body.appendChild(tr);
@@ -428,30 +429,27 @@ function fillTable(data){
 }
 
 
-/* ===== STATS ===== */
+// ===== STATS =====
 
 function fillStats(data){
 
-  let total = data.length;
+  document.getElementById("total").innerText = data.length;
 
   let cin = data.filter(r=>r.type=="checkin").length;
-
   let cout = data.filter(r=>r.type=="checkout").length;
 
-  let today = new Date().toISOString().slice(0,10);
-
-  let todayCount = data.filter(r=>r.date==today).length;
-
-
-  document.getElementById("total").innerText = total;
   document.getElementById("checkin").innerText = cin;
   document.getElementById("checkout").innerText = cout;
+
+  let today = new Date().toISOString().slice(0,10);
+  let todayCount = data.filter(r=>r.date==today).length;
+
   document.getElementById("today").innerText = todayCount;
 
 }
 
 
-/* ===== AUTO LOGIN ===== */
+// ===== AUTO LOGIN =====
 
 if(localStorage.getItem("admin")==="true"){
   startLoading();
