@@ -39,9 +39,7 @@ body{
   text-align:center;
 }
 
-.login-box h2{
-  margin-bottom:10px;
-}
+.login-box h2{margin-bottom:10px;}
 
 .login-box input{
   width:100%;
@@ -96,9 +94,7 @@ body{
   margin-bottom:15px;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 #percent{
   font-size:24px;
@@ -311,20 +307,21 @@ th{
 
 /* ===== CONFIG ===== */
 
-const PASSWORD = "report0816"; // change if needed
+const PASSWORD = "report0816";
 
-// Your Sheet ID
 const SHEET_ID = "1_7g_XuKW0TnjV2no4it9lrljoViP-ID1YlsQvsKQs2M";
 
 
 // ===== LOGIN =====
 
 function login(){
+
   let pass = document.getElementById("password").value;
+
   if(pass === PASSWORD){
     localStorage.setItem("admin","true");
     startLoading();
-  } else {
+  }else{
     document.getElementById("error").style.display="block";
   }
 }
@@ -338,20 +335,68 @@ function logout(){
 // ===== LOADING =====
 
 function startLoading(){
+
   document.getElementById("loginPage").style.display="none";
   document.getElementById("loadingScreen").style.display="flex";
 
-  let p=0;
+  let p = 0;
+
   let timer = setInterval(()=>{
+
     p++;
     document.getElementById("percent").innerText = p + "%";
+
     if(p>=100){
       clearInterval(timer);
       document.getElementById("loadingScreen").style.display="none";
       loadDashboard();
     }
+
   },20);
 }
+
+
+// ===== DATE PARSER =====
+
+function parseGoogleDate(val){
+
+  if(typeof val !== "string") return null;
+
+  if(!val.startsWith("Date(")) return null;
+
+  let nums = val.match(/\d+/g).map(Number);
+
+  return new Date(
+    nums[0],
+    nums[1],
+    nums[2]||1,
+    nums[3]||0,
+    nums[4]||0,
+    nums[5]||0
+  );
+}
+
+
+function formatDateOnly(val){
+
+  let d = parseGoogleDate(val);
+  if(!d) return "";
+
+  return d.toLocaleDateString();
+}
+
+
+function formatTimeOnly(val){
+
+  let d = parseGoogleDate(val);
+  if(!d) return "";
+
+  return d.toLocaleTimeString([],{
+    hour:'2-digit',
+    minute:'2-digit'
+  });
+}
+
 
 
 // ===== LOAD DATA =====
@@ -360,40 +405,37 @@ function loadDashboard(){
 
   document.getElementById("dashboard").classList.remove("hidden");
 
-  let url = 
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+  let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
   fetch(url)
-    .then(res => res.text())
-    .then(text => {
+  .then(res=>res.text())
+  .then(text=>{
 
-      // parse JSON out of response
-      let json = JSON.parse(
-        text.replace("/*O_o*/","")
-            .replace("google.visualization.Query.setResponse(","")
-            .slice(0,-2)
-      );
+    let json = JSON.parse(
+      text.replace("/*O_o*/","")
+          .replace("google.visualization.Query.setResponse(","")
+          .slice(0,-2)
+    );
 
-      let table = json.table;
-      let cols = table.cols.map(c=>c.label.toLowerCase());
-      let rows = table.rows.map(r=>{
-        return r.c.map(x=>x?x.v:"");
-      });
+    let cols = json.table.cols.map(c=>c.label.toLowerCase());
 
-      let data = rows.map(r=>{
-        let obj = {};
-        cols.forEach((k,i)=>obj[k]=r[i]);
-        return obj;
-      });
-
-      fillTable(data);
-      fillStats(data);
-
-    })
-    .catch(()=>{
-      alert("Failed to load sheet data");
+    let rows = json.table.rows.map(r=>{
+      return r.c.map(x=>x?x.v:"");
     });
 
+    let data = rows.map(r=>{
+      let obj = {};
+      cols.forEach((k,i)=>obj[k]=r[i]);
+      return obj;
+    });
+
+    fillTable(data);
+    fillStats(data);
+
+  })
+  .catch(()=>{
+    alert("Failed to load data");
+  });
 }
 
 
@@ -402,6 +444,7 @@ function loadDashboard(){
 function fillTable(data){
 
   let body = document.querySelector("#reportTable tbody");
+
   body.innerHTML = "";
 
   data.forEach(r=>{
@@ -413,13 +456,13 @@ function fillTable(data){
       <td>${r.name||""}</td>
       <td>${r.table||""}</td>
       <td>${r.work||""}</td>
-      <td>${r.date||""}</td>
-      <td>${r.time||""}</td>
+      <td>${formatDateOnly(r.date)}</td>
+      <td>${formatTimeOnly(r.time)}</td>
       <td>${r.cleaned||""}</td>
       <td>${r.cctv||""}</td>
       <td>${r.waste||""}</td>
       <td>${r.internet||""}</td>
-      <td>${r.timestamp||""}</td>
+      <td>${formatDateOnly(r.timestamp)} ${formatTimeOnly(r.timestamp)}</td>
     `;
 
     body.appendChild(tr);
@@ -435,14 +478,30 @@ function fillStats(data){
 
   document.getElementById("total").innerText = data.length;
 
-  let cin = data.filter(r=>r.type=="checkin").length;
-  let cout = data.filter(r=>r.type=="checkout").length;
+  let cin = data.filter(r=>r.type==="checkin").length;
+  let cout = data.filter(r=>r.type==="checkout").length;
 
   document.getElementById("checkin").innerText = cin;
   document.getElementById("checkout").innerText = cout;
 
-  let today = new Date().toISOString().slice(0,10);
-  let todayCount = data.filter(r=>r.date==today).length;
+
+  // FIX TODAY COUNT
+
+  let now = new Date();
+
+  let todayCount = data.filter(r=>{
+
+    let d = parseGoogleDate(r.date);
+    if(!d) return false;
+
+    return (
+      d.getFullYear()===now.getFullYear() &&
+      d.getMonth()===now.getMonth() &&
+      d.getDate()===now.getDate()
+    );
+
+  }).length;
+
 
   document.getElementById("today").innerText = todayCount;
 
