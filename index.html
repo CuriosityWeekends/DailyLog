@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Check In / Check Out System</title>
+<title>Daily Report System</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -30,6 +30,7 @@ h1{
   margin-bottom:30px;
 }
 
+
 /* ===== CARD ===== */
 
 .card{
@@ -50,6 +51,7 @@ h1{
   margin-bottom:15px;
 }
 
+
 /* ===== FORM ===== */
 
 input{
@@ -65,6 +67,7 @@ input:focus{
   border-color:#2563eb;
   outline:none;
 }
+
 
 /* ===== CHECKBOX ===== */
 
@@ -86,6 +89,7 @@ input:focus{
   cursor:pointer;
 }
 
+
 /* ===== BUTTON ===== */
 
 button{
@@ -104,6 +108,7 @@ button{
 button:hover{
   background:#1e40af;
 }
+
 
 /* ===== MODAL ===== */
 
@@ -131,6 +136,7 @@ button:hover{
   to{transform:scale(1);opacity:1}
 }
 
+
 /* LOADER */
 
 .spinner{
@@ -143,9 +149,8 @@ button:hover{
   margin:0 auto 10px;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 
 /* SUCCESS */
 
@@ -288,15 +293,16 @@ button:hover{
 
 <script>
 
-// 🔗 YOUR SCRIPT URL
+// 🔗 YOUR GOOGLE SCRIPT URL
 const API = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
 
 
-// ===== MODAL =====
+// ===== MODAL CONTROL =====
 
 const modal = document.getElementById("submitModal");
 const loader = document.getElementById("loaderBox");
 const success = document.getElementById("successBox");
+
 
 function openModal(){
   modal.style.display="flex";
@@ -340,11 +346,15 @@ function send(form,type){
 
   openModal();
 
+  // CORS SAFE SUBMIT
   fetch(API,{
     method:"POST",
+    mode:"no-cors",     // 🔥 IMPORTANT
+    headers:{
+      "Content-Type":"application/json"
+    },
     body:JSON.stringify(data)
   })
-  .then(r=>r.text())
   .then(()=>{
 
     showSuccess();
