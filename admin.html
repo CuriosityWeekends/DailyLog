@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Dashboard</title>
+<title>Admin Panel</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -22,10 +22,11 @@ body{
 .hidden{display:none;}
 
 .container{
-  max-width:1200px;
+  max-width:1300px;
   margin:auto;
   padding:20px;
 }
+
 
 /* ===== LOGIN ===== */
 
@@ -35,16 +36,14 @@ body{
   background:white;
   padding:30px;
   border-radius:12px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.1);
+  box-shadow:0 6px 20px rgba(0,0,0,.1);
   text-align:center;
 }
-
-.login-box h2{margin-bottom:10px;}
 
 .login-box input{
   width:100%;
   padding:12px;
-  margin:12px 0;
+  margin:10px 0;
   border:1px solid #cbd5e1;
   border-radius:6px;
 }
@@ -56,50 +55,10 @@ body{
   color:white;
   border:none;
   border-radius:6px;
-  font-weight:600;
   cursor:pointer;
 }
 
-.login-box button:hover{
-  background:#1e40af;
-}
-
-#error{
-  color:red;
-  display:none;
-}
-
-
-/* ===== LOADING ===== */
-
-#loadingScreen{
-  position:fixed;
-  inset:0;
-  background:#020617;
-  color:white;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  z-index:9999;
-}
-
-.loader-circle{
-  width:80px;
-  height:80px;
-  border:6px solid #334155;
-  border-top:6px solid #38bdf8;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin-bottom:15px;
-}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-
-#percent{
-  font-size:24px;
-  font-weight:700;
-}
+#error{color:red;display:none;}
 
 
 /* ===== HEADER ===== */
@@ -111,52 +70,52 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+  box-shadow:0 4px 10px rgba(0,0,0,.06);
   margin-bottom:20px;
 }
 
-.header h2{margin:0;}
-
 .header button{
-  padding:8px 14px;
   background:#ef4444;
   color:white;
   border:none;
+  padding:8px 14px;
   border-radius:6px;
   cursor:pointer;
 }
 
-.header button:hover{
-  background:#dc2626;
-}
 
+/* ===== FILTER ===== */
 
-/* ===== DASHBOARD ===== */
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
-  margin-bottom:25px;
-}
-
-.stat-card{
+.filter-box{
   background:white;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.06);
+  margin-bottom:20px;
+
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  align-items:center;
 }
 
-.stat-card h3{
-  margin:0;
-  font-size:14px;
-  color:#6b7280;
+.filter-box input{
+  padding:8px;
+  border:1px solid #cbd5e1;
+  border-radius:6px;
 }
 
-.stat-card p{
-  margin:5px 0 0;
-  font-size:26px;
-  font-weight:700;
+.filter-box button{
+  padding:8px 14px;
+  background:#22c55e;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.filter-box button:hover{
+  background:#16a34a;
 }
 
 
@@ -166,7 +125,7 @@ body{
   background:white;
   padding:15px;
   border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
   overflow:auto;
 }
 
@@ -179,7 +138,6 @@ table{
 th,td{
   padding:10px;
   border-bottom:1px solid #e5e7eb;
-  text-align:left;
 }
 
 th{
@@ -194,36 +152,22 @@ th{
 <body>
 
 
-<!-- ===== LOGIN ===== -->
+<!-- ========== LOGIN ========== -->
 
 <div id="loginPage" class="login-box">
 
 <h2>🔐 Admin Login</h2>
-<p>Enter password</p>
 
-<input type="password" id="password" placeholder="Admin Password">
+<input type="password" id="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
 
-<p id="error">Wrong Password ❌</p>
+<p id="error">Wrong password ❌</p>
 
 </div>
 
 
-<!-- ===== LOADING ===== -->
-
-<div id="loadingScreen">
-
-<div class="loader-circle"></div>
-
-<p>Please wait, loading data...</p>
-
-<p id="percent">0%</p>
-
-</div>
-
-
-<!-- ===== DASHBOARD ===== -->
+<!-- ========== DASHBOARD ========== -->
 
 <div id="dashboard" class="hidden">
 
@@ -234,36 +178,26 @@ th{
 
 <div class="header">
 
-<h2>📊 Report Dashboard</h2>
+<h2>📊 Report Admin Panel</h2>
 
 <button onclick="logout()">Logout</button>
 
 </div>
 
 
-<!-- STATS -->
+<!-- FILTER -->
 
-<div class="cards">
+<div class="filter-box">
 
-<div class="stat-card">
-<h3>Total Reports</h3>
-<p id="total">--</p>
-</div>
+<label>From:</label>
+<input type="date" id="fromDate">
 
-<div class="stat-card">
-<h3>Check In</h3>
-<p id="checkin">--</p>
-</div>
+<label>To:</label>
+<input type="date" id="toDate">
 
-<div class="stat-card">
-<h3>Check Out</h3>
-<p id="checkout">--</p>
-</div>
+<button onclick="applyFilter()">Filter</button>
 
-<div class="stat-card">
-<h3>Today</h3>
-<p id="today">--</p>
-</div>
+<button onclick="downloadMD()">⬇ Download Summary (.md)</button>
 
 </div>
 
@@ -272,9 +206,7 @@ th{
 
 <div class="table-box">
 
-<h3>📄 All Reports</h3>
-
-<table id="reportTable">
+<table id="dataTable">
 
 <thead>
 <tr>
@@ -288,6 +220,11 @@ th{
 <th>CCTV</th>
 <th>Waste</th>
 <th>Net</th>
+<th>Work Done</th>
+<th>Day Feedback</th>
+<th>Floor</th>
+<th>Cable</th>
+<th>Tools</th>
 <th>Timestamp</th>
 </tr>
 </thead>
@@ -309,75 +246,67 @@ th{
 
 const PASSWORD = "report0816";
 
-const SHEET_ID = "1_7g_XuKW0TnjV2no4it9lrljoViP-ID1YlsQvsKQs2M";
+const SHEET_ID =
+"1_7g_XuKW0TnjV2no4it9lrljoViP-ID1YlsQvsKQs2M";
+
+
+let allData = [];
 
 
 // ===== LOGIN =====
 
 function login(){
 
-  let pass = document.getElementById("password").value;
+  if(document.getElementById("password").value===PASSWORD){
 
-  if(pass === PASSWORD){
     localStorage.setItem("admin","true");
-    startLoading();
+
+    showDashboard();
+
   }else{
+
     document.getElementById("error").style.display="block";
+
   }
 }
 
+
 function logout(){
+
   localStorage.removeItem("admin");
   location.reload();
+
 }
 
 
-// ===== LOADING =====
 
-function startLoading(){
+// ===== SHOW DASHBOARD =====
+
+function showDashboard(){
 
   document.getElementById("loginPage").style.display="none";
-  document.getElementById("loadingScreen").style.display="flex";
+  document.getElementById("dashboard").classList.remove("hidden");
 
-  let p = 0;
+  loadData();
 
-  let timer = setInterval(()=>{
-
-    p++;
-    document.getElementById("percent").innerText = p + "%";
-
-    if(p>=100){
-      clearInterval(timer);
-      document.getElementById("loadingScreen").style.display="none";
-      loadDashboard();
-    }
-
-  },20);
 }
 
 
-// ===== DATE PARSER =====
+
+// ===== GOOGLE DATE =====
 
 function parseGoogleDate(val){
 
-  if(typeof val !== "string") return null;
+  if(!val || !val.startsWith("Date(")) return null;
 
-  if(!val.startsWith("Date(")) return null;
+  let n = val.match(/\d+/g).map(Number);
 
-  let nums = val.match(/\d+/g).map(Number);
-
-  return new Date(
-    nums[0],
-    nums[1],
-    nums[2]||1,
-    nums[3]||0,
-    nums[4]||0,
-    nums[5]||0
-  );
+  return new Date(n[0],n[1],n[2],n[3]||0,n[4]||0,n[5]||0);
 }
 
 
-function formatDateOnly(val){
+
+function formatDate(val){
 
   let d = parseGoogleDate(val);
   if(!d) return "";
@@ -386,7 +315,7 @@ function formatDateOnly(val){
 }
 
 
-function formatTimeOnly(val){
+function formatTime(val){
 
   let d = parseGoogleDate(val);
   if(!d) return "";
@@ -401,14 +330,13 @@ function formatTimeOnly(val){
 
 // ===== LOAD DATA =====
 
-function loadDashboard(){
+function loadData(){
 
-  document.getElementById("dashboard").classList.remove("hidden");
-
-  let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+  let url =
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
   fetch(url)
-  .then(res=>res.text())
+  .then(r=>r.text())
   .then(text=>{
 
     let json = JSON.parse(
@@ -419,50 +347,57 @@ function loadDashboard(){
 
     let cols = json.table.cols.map(c=>c.label.toLowerCase());
 
-    let rows = json.table.rows.map(r=>{
-      return r.c.map(x=>x?x.v:"");
+    let rows = json.table.rows.map(r=>r.c.map(x=>x?x.v:""));
+
+    allData = rows.map(r=>{
+      let o={};
+      cols.forEach((k,i)=>o[k]=r[i]);
+      return o;
     });
 
-    let data = rows.map(r=>{
-      let obj = {};
-      cols.forEach((k,i)=>obj[k]=r[i]);
-      return obj;
-    });
+    fillTable(allData);
 
-    fillTable(data);
-    fillStats(data);
-
-  })
-  .catch(()=>{
-    alert("Failed to load data");
   });
+
 }
+
 
 
 // ===== TABLE =====
 
 function fillTable(data){
 
-  let body = document.querySelector("#reportTable tbody");
+  let body =
+    document.querySelector("#dataTable tbody");
 
-  body.innerHTML = "";
+  body.innerHTML="";
 
   data.forEach(r=>{
 
     let tr = document.createElement("tr");
 
-    tr.innerHTML = `
+    tr.innerHTML=`
       <td>${r.type||""}</td>
       <td>${r.name||""}</td>
       <td>${r.table||""}</td>
       <td>${r.work||""}</td>
-      <td>${formatDateOnly(r.date)}</td>
-      <td>${formatTimeOnly(r.time)}</td>
+
+      <td>${formatDate(r.date)}</td>
+      <td>${formatTime(r.time)}</td>
+
       <td>${r.cleaned||""}</td>
       <td>${r.cctv||""}</td>
       <td>${r.waste||""}</td>
       <td>${r.internet||""}</td>
-      <td>${formatDateOnly(r.timestamp)} ${formatTimeOnly(r.timestamp)}</td>
+
+      <td>${r.workdone||""}</td>
+      <td>${r.dayfeedback||""}</td>
+
+      <td>${r.floorclean||""}</td>
+      <td>${r.cablesafe||""}</td>
+      <td>${r.toolsreturned||""}</td>
+
+      <td>${formatDate(r.timestamp)} ${formatTime(r.timestamp)}</td>
     `;
 
     body.appendChild(tr);
@@ -472,46 +407,140 @@ function fillTable(data){
 }
 
 
-// ===== STATS =====
 
-function fillStats(data){
+// ===== FILTER =====
 
-  document.getElementById("total").innerText = data.length;
+function applyFilter(){
 
-  let cin = data.filter(r=>r.type==="checkin").length;
-  let cout = data.filter(r=>r.type==="checkout").length;
+  let f = document.getElementById("fromDate").value;
+  let t = document.getElementById("toDate").value;
 
-  document.getElementById("checkin").innerText = cin;
-  document.getElementById("checkout").innerText = cout;
+  if(!f || !t){
+    fillTable(allData);
+    return;
+  }
 
+  let from = new Date(f);
+  let to = new Date(t);
 
-  // FIX TODAY COUNT
+  to.setHours(23,59,59);
 
-  let now = new Date();
-
-  let todayCount = data.filter(r=>{
+  let filtered = allData.filter(r=>{
 
     let d = parseGoogleDate(r.date);
+
     if(!d) return false;
 
-    return (
-      d.getFullYear()===now.getFullYear() &&
-      d.getMonth()===now.getMonth() &&
-      d.getDate()===now.getDate()
-    );
+    return d>=from && d<=to;
 
-  }).length;
+  });
 
-
-  document.getElementById("today").innerText = todayCount;
+  fillTable(filtered);
 
 }
+
+
+
+// ===== DOWNLOAD MARKDOWN =====
+
+function downloadMD(){
+
+  let f = document.getElementById("fromDate").value;
+  let t = document.getElementById("toDate").value;
+
+  let data = allData;
+
+  if(f && t){
+
+    let from = new Date(f);
+    let to = new Date(t);
+    to.setHours(23,59,59);
+
+    data = allData.filter(r=>{
+      let d = parseGoogleDate(r.date);
+      return d && d>=from && d<=to;
+    });
+  }
+
+
+  if(data.length===0){
+    alert("No data found");
+    return;
+  }
+
+
+  let checkin = data.filter(r=>r.type==="checkin").length;
+  let checkout = data.filter(r=>r.type==="checkout").length;
+
+
+  let md = `# 📊 Curiosity Weekends Report
+
+## 📅 Period
+From: ${f||"All"}
+To: ${t||"All"}
+
+---
+
+## 📈 Summary
+
+- Total Reports: ${data.length}
+- Check Ins: ${checkin}
+- Check Outs: ${checkout}
+
+---
+
+## 📋 Details
+
+`;
+
+
+  data.forEach((r,i)=>{
+
+    md += `
+### ${i+1}. ${r.name} (${r.type.toUpperCase()})
+
+- Table: ${r.table}
+- Work: ${r.work}
+- Date: ${formatDate(r.date)}
+- Time: ${formatTime(r.time)}
+
+- Cleaned: ${r.cleaned}
+- CCTV: ${r.cctv}
+- Waste: ${r.waste}
+- Internet: ${r.internet}
+
+- Work Done: ${r.workdone}
+- Day Feedback: ${r.dayfeedback}
+
+- Floor: ${r.floorclean}
+- Cable: ${r.cablesafe}
+- Tools: ${r.toolsreturned}
+
+---
+
+`;
+  });
+
+
+  let blob = new Blob([md],{type:"text/markdown"});
+
+  let a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+
+  a.download =
+    `report_${f||"all"}_to_${t||"all"}.md`;
+
+  a.click();
+
+}
+
 
 
 // ===== AUTO LOGIN =====
 
 if(localStorage.getItem("admin")==="true"){
-  startLoading();
+  showDashboard();
 }
 
 </script>
