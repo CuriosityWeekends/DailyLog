@@ -213,6 +213,8 @@ button:hover{
 <input type="date" id="ci_date" required>
 <input type="time" id="ci_time" required>
 
+<!-- Check In Checkboxes -->
+
 <div class="check-row">
 <input type="checkbox" id="ci_clean">
 <label for="ci_clean">Is table cleaned?</label>
@@ -256,12 +258,37 @@ button:hover{
 <input type="time" id="co_time" required>
 
 
-<!-- NEW QUESTIONS -->
+<!-- Extra Questions -->
 
 <textarea id="co_done" placeholder="What work did you complete today?" required></textarea>
 
 <textarea id="co_day" placeholder="How was your day today?" required></textarea>
 
+
+<!-- SAME CHECKBOXES FOR CHECKOUT -->
+
+<div class="check-row">
+<input type="checkbox" id="co_clean">
+<label for="co_clean">Is table cleaned?</label>
+</div>
+
+<div class="check-row">
+<input type="checkbox" id="co_cctv">
+<label for="co_cctv">Is CCTV working?</label>
+</div>
+
+<div class="check-row">
+<input type="checkbox" id="co_waste">
+<label for="co_waste">Waste basket available?</label>
+</div>
+
+<div class="check-row">
+<input type="checkbox" id="co_internet">
+<label for="co_internet">Internet connection perfect?</label>
+</div>
+
+
+<!-- Safety Checks -->
 
 <div class="check-row">
 <input type="checkbox" id="co_floor">
@@ -312,7 +339,7 @@ button:hover{
 
 <script>
 
-// 🔗 YOUR GOOGLE SCRIPT URL
+// 🔗 YOUR SCRIPT URL
 const API = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
 
 
@@ -355,10 +382,11 @@ function send(form,type){
     date:document.getElementById(p+"_date").value,
     time:document.getElementById(p+"_time").value,
 
-    cleaned:document.getElementById(p+"_clean")?.checked?"Yes":"No",
-    cctv:document.getElementById(p+"_cctv")?.checked?"Yes":"No",
-    waste:document.getElementById(p+"_waste")?.checked?"Yes":"No",
-    internet:document.getElementById(p+"_internet")?.checked?"Yes":"No",
+    // Checkboxes (Both)
+    cleaned:document.getElementById(p+"_clean").checked?"Yes":"No",
+    cctv:document.getElementById(p+"_cctv").checked?"Yes":"No",
+    waste:document.getElementById(p+"_waste").checked?"Yes":"No",
+    internet:document.getElementById(p+"_internet").checked?"Yes":"No",
 
     // Checkout extras
     done:document.getElementById("co_done")?.value || "",
