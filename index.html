@@ -54,16 +54,23 @@ h1{
 
 /* ===== FORM ===== */
 
-input{
+input, textarea{
   width:100%;
   padding:12px;
   margin:8px 0;
   border:1px solid #cbd5e1;
   border-radius:6px;
   font-size:14px;
+  font-family:inherit;
 }
 
-input:focus{
+textarea{
+  resize:vertical;
+  min-height:60px;
+}
+
+input:focus,
+textarea:focus{
   border-color:#2563eb;
   outline:none;
 }
@@ -124,7 +131,7 @@ button:hover{
 
 .modal-card{
   background:white;
-  width:260px;
+  width:280px;
   padding:25px;
   border-radius:12px;
   text-align:center;
@@ -154,9 +161,7 @@ button:hover{
 
 /* SUCCESS */
 
-#successBox{
-  display:none;
-}
+#successBox{display:none;}
 
 .checkmark{
   width:60px;
@@ -175,6 +180,13 @@ button:hover{
   to{transform:scale(1)}
 }
 
+.welcome-msg{
+  color:#2563eb;
+  font-size:14px;
+  font-weight:600;
+  margin-top:8px;
+}
+
 </style>
 </head>
 
@@ -185,7 +197,7 @@ button:hover{
 <h1>📋 Daily Report System</h1>
 
 
-<!-- ===== CHECK IN ===== -->
+<!-- ================= CHECK IN ================= -->
 
 <div class="card">
 
@@ -227,7 +239,7 @@ button:hover{
 </div>
 
 
-<!-- ===== CHECK OUT ===== -->
+<!-- ================= CHECK OUT ================= -->
 
 <div class="card">
 
@@ -243,25 +255,29 @@ button:hover{
 <input type="date" id="co_date" required>
 <input type="time" id="co_time" required>
 
+
+<!-- NEW QUESTIONS -->
+
+<textarea id="co_done" placeholder="What work did you complete today?" required></textarea>
+
+<textarea id="co_day" placeholder="How was your day today?" required></textarea>
+
+
 <div class="check-row">
-<input type="checkbox" id="co_clean">
-<label for="co_clean">Is table cleaned?</label>
+<input type="checkbox" id="co_floor">
+<label for="co_floor">Floor clean & tidy?</label>
 </div>
 
 <div class="check-row">
-<input type="checkbox" id="co_cctv">
-<label for="co_cctv">Is CCTV working?</label>
+<input type="checkbox" id="co_cable">
+<label for="co_cable">All cables safe?</label>
 </div>
 
 <div class="check-row">
-<input type="checkbox" id="co_waste">
-<label for="co_waste">Waste basket available?</label>
+<input type="checkbox" id="co_tools">
+<label for="co_tools">All tools/components returned?</label>
 </div>
 
-<div class="check-row">
-<input type="checkbox" id="co_internet">
-<label for="co_internet">Internet connection perfect?</label>
-</div>
 
 <button type="submit">Submit Check Out</button>
 
@@ -271,7 +287,7 @@ button:hover{
 </div>
 
 
-<!-- ===== MODAL ===== -->
+<!-- ================= MODAL ================= -->
 
 <div id="submitModal">
 
@@ -285,6 +301,9 @@ button:hover{
 <div id="successBox">
   <div class="checkmark">✓</div>
   <p>Submitted Successfully</p>
+  <div class="welcome-msg">
+    💙 Curiosity Weekends always welcomes you
+  </div>
 </div>
 
 </div>
@@ -297,12 +316,11 @@ button:hover{
 const API = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
 
 
-// ===== MODAL CONTROL =====
+// ===== MODAL =====
 
 const modal = document.getElementById("submitModal");
 const loader = document.getElementById("loaderBox");
 const success = document.getElementById("successBox");
-
 
 function openModal(){
   modal.style.display="flex";
@@ -337,19 +355,24 @@ function send(form,type){
     date:document.getElementById(p+"_date").value,
     time:document.getElementById(p+"_time").value,
 
-    cleaned:document.getElementById(p+"_clean").checked?"Yes":"No",
-    cctv:document.getElementById(p+"_cctv").checked?"Yes":"No",
-    waste:document.getElementById(p+"_waste").checked?"Yes":"No",
-    internet:document.getElementById(p+"_internet").checked?"Yes":"No"
+    cleaned:document.getElementById(p+"_clean")?.checked?"Yes":"No",
+    cctv:document.getElementById(p+"_cctv")?.checked?"Yes":"No",
+    waste:document.getElementById(p+"_waste")?.checked?"Yes":"No",
+    internet:document.getElementById(p+"_internet")?.checked?"Yes":"No",
 
+    // Checkout extras
+    done:document.getElementById("co_done")?.value || "",
+    day:document.getElementById("co_day")?.value || "",
+    floor:document.getElementById("co_floor")?.checked?"Yes":"No",
+    cable:document.getElementById("co_cable")?.checked?"Yes":"No",
+    tools:document.getElementById("co_tools")?.checked?"Yes":"No"
   };
 
   openModal();
 
-  // CORS SAFE SUBMIT
   fetch(API,{
     method:"POST",
-    mode:"no-cors",     // 🔥 IMPORTANT
+    mode:"no-cors",
     headers:{
       "Content-Type":"application/json"
     },
@@ -362,7 +385,7 @@ function send(form,type){
     setTimeout(()=>{
       closeModal();
       form.reset();
-    },1500);
+    },1800);
 
   })
   .catch(()=>{
@@ -375,7 +398,7 @@ function send(form,type){
 }
 
 
-// ===== FORM EVENTS =====
+// ===== EVENTS =====
 
 document.getElementById("checkinForm").addEventListener("submit",e=>{
   e.preventDefault();
