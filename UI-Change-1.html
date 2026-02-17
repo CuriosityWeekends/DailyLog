@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech-Report Alpha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== PREMIUM DARK THEME VARIABLES ===== */
+        :root {
+            --bg: #05070a;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #f3f4f6;
+            --text-dim: #9ca3af;
+            --border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top right, #111827, #05070a);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            background: linear-gradient(to right, #fff, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ===== NAVIGATION SCREEN ===== */
+        #navScreen {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .nav-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn .icon { font-size: 24px; margin-bottom: 10px; }
+        .nav-btn .title { font-size: 18px; font-weight: 700; }
+        .nav-btn .desc { font-size: 13px; color: var(--text-dim); }
+
+        /* ===== FORMS (HIDDEN INITIALLY) ===== */
+        .form-section {
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        /* ===== INPUTS & UI ELEMENTS ===== */
+        input, textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 10px;
+            color: white;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .check-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+
+        .check-row input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            accent-color: var(--accent);
+        }
+
+        button.submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        button.submit-btn:hover {
+            box-shadow: 0 0 25px var(--accent-glow);
+            filter: brightness(1.1);
+        }
+
+        /* ===== MODAL ===== */
+        #submitModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-card {
+            background: #111827;
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>CORE SYSTEM</h1>
+
+    <div id="navScreen">
+        <div class="nav-btn" onclick="showForm('checkin')">
+            <span class="icon">🚀</span>
+            <span class="title">System Check-In</span>
+            <span class="desc">Initialize daily logs and environment check.</span>
+        </div>
+        <div class="nav-btn" onclick="showForm('checkout')">
+            <span class="icon">🔐</span>
+            <span class="title">System Check-Out</span>
+            <span class="desc">Finalize tasks and secure the workstation.</span>
+        </div>
+    </div>
+
+    <div id="checkinSection" class="form-section">
+        <div class="back-link" onclick="showNav()">← Back to Terminal</div>
+        <div class="card">
+            <h2 style="margin-top:0">Check-In</h2>
+            <form id="checkinForm">
+                <input id="ci_name" placeholder="Operator Name" required>
+                <input id="ci_table" placeholder="Station Identifier" required>
+                <input id="ci_work" placeholder="Expected Objectives" required>
+                <div style="display:flex; gap:10px;">
+                    <input type="date" id="ci_date" required>
+                    <input type="time" id="ci_time" required>
+                </div>
+
+                <div class="check-row"><input type="checkbox" id="ci_clean"><label>Station Sanitized</label></div>
+                <div class="check-row"><input type="checkbox" id="ci_cctv"><label>Surveillance Active</label></div>
+                <div class="check-row"><input type="checkbox" id="ci_waste"><label>Waste Management Ready</label></div>
+                <div class="check-row"><input type="checkbox" id="ci_internet"><label>Uplink Stable</label></div>
+
+                <button type="submit" class="submit-btn">AUTHORIZE CHECK-IN</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="checkoutSection" class="form-section">
+        <div class="back-link" onclick="showNav()">← Back to Terminal</div>
+        <div class="card">
+            <h2 style="margin-top:0">Check-Out</h2>
+            <form id="checkoutForm">
+                <input id="co_name" placeholder="Operator Name" required>
+                <input id="co_table" placeholder="Station Identifier" required>
+                <input id="co_work" placeholder="Work Summary" required>
+                <div style="display:flex; gap:10px;">
+                    <input type="date" id="co_date" required>
+                    <input type="time" id="co_time" required>
+                </div>
+
+                <textarea id="co_done" placeholder="Detailed Tasks Completed" required></textarea>
+                <textarea id="co_day" placeholder="Operational Feedback" required></textarea>
+
+                <div class="check-row"><input type="checkbox" id="co_clean"><label>Station Restored</label></div>
+                <div class="check-row"><input type="checkbox" id="co_floor"><label>Floor Perimeter Clear</label></div>
+                <div class="check-row"><input type="checkbox" id="co_tools"><label>Hardware Accounted For</label></div>
+
+                <button type="submit" class="submit-btn">TERMINATE SESSION</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="submitModal">
+    <div class="modal-card">
+        <div id="loaderBox">
+            <div class="spinner"></div>
+            <p style="color:var(--text-dim)">Uploading to Grid...</p>
+        </div>
+        <div id="successBox" style="display:none">
+            <div style="font-size:40px; color:#22c55e; margin-bottom:15px">✓</div>
+            <h3 style="margin:0">Protocol Complete</h3>
+            <p style="font-size:13px; color:var(--text-dim); margin-top:10px;">Curiosity Weekends: Unlearn & Relearn.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
+
+    // --- NAVIGATION LOGIC ---
+    function showForm(type) {
+        document.getElementById('navScreen').style.display = 'none';
+        if(type === 'checkin') document.getElementById('checkinSection').style.display = 'block';
+        else document.getElementById('checkoutSection').style.display = 'block';
+    }
+
+    function showNav() {
+        document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
+        document.getElementById('navScreen').style.display = 'flex';
+    }
+
+    // --- FORM SUBMISSION ---
+    function send(form, type) {
+        let p = type === "checkin" ? "ci" : "co";
+        let data = {
+            type: type,
+            name: document.getElementById(p+"_name").value,
+            table: document.getElementById(p+"_table").value,
+            work: document.getElementById(p+"_work").value,
+            date: document.getElementById(p+"_date").value,
+            time: document.getElementById(p+"_time").value,
+            cleaned: document.getElementById(p+"_clean")?.checked ? "Yes" : "No",
+            cctv: document.getElementById(p+"_cctv")?.checked ? "Yes" : "No",
+            done: document.getElementById("co_done")?.value || "",
+            // ... rest of data extraction ...
+        };
+
+        const modal = document.getElementById("submitModal");
+        modal.style.display = "flex";
+
+        fetch(API, { method: "POST", mode: "no-cors", body: JSON.stringify(data) })
+        .then(() => {
+            document.getElementById("loaderBox").style.display = "none";
+            document.getElementById("successBox").style.display = "block";
+            setTimeout(() => {
+                modal.style.display = "none";
+                document.getElementById("loaderBox").style.display = "block";
+                document.getElementById("successBox").style.display = "none";
+                form.reset();
+                showNav();
+            }, 2000);
+        });
+    }
+
+    document.getElementById("checkinForm").onsubmit = e => { e.preventDefault(); send(e.target, "checkin"); };
+    document.getElementById("checkoutForm").onsubmit = e => { e.preventDefault(); send(e.target, "checkout"); };
+</script>
+</body>
+</html>
