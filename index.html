@@ -1,423 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Core System Alpha</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #030712;
-            --card-bg: rgba(17, 24, 39, 0.8);
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.3);
-            --text-main: #f9fafb;
-            --text-dim: #9ca3af;
-            --border: rgba(255, 255, 255, 0.08);
-            --input-focus: rgba(59, 130, 246, 0.15);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core System Alpha</title>
 
-        body {
-            margin: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.1) 0px, transparent 50%);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-        .container {
-            width: 100%;
-            max-width: 480px;
-            padding: 40px 20px;
-        }
+<style>
+:root{
+--bg:#030712;
+--card-bg:rgba(17,24,39,0.8);
+--accent:#3b82f6;
+--accent-glow:rgba(59,130,246,0.3);
+--text-main:#f9fafb;
+--text-dim:#9ca3af;
+--border:rgba(255,255,255,0.08);
+--input-focus:rgba(59,130,246,0.15);
+}
 
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+body{
+margin:0;
+font-family:'Plus Jakarta Sans',sans-serif;
+background-color:var(--bg);
+background-image:
+radial-gradient(at 0% 0%,rgba(59,130,246,0.15) 0px,transparent 50%),
+radial-gradient(at 100% 100%,rgba(37,99,235,0.1) 0px,transparent 50%);
+color:var(--text-main);
+min-height:100vh;
+display:flex;
+justify-content:center;
+}
 
-        header h1 {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin: 0;
-            background: linear-gradient(135deg, #fff 0%, #93c5fd 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.container{
+width:100%;
+max-width:480px;
+padding:40px 20px;
+}
 
-        header p {
-            color: var(--text-dim);
-            font-size: 14px;
-            margin-top: 8px;
-        }
+header{text-align:center;margin-bottom:50px;}
+header h1{
+font-size:28px;
+font-weight:800;
+margin:0;
+background:linear-gradient(135deg,#fff 0%,#93c5fd 100%);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+header p{color:var(--text-dim);font-size:14px;margin-top:8px;}
 
-        /* ===== LANDING SCREEN ===== */
-        #navScreen {
-            display: grid;
-            gap: 16px;
-            animation: fadeIn 0.6s ease-out;
-        }
+#navScreen{display:grid;gap:16px;}
 
-        .nav-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 24px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(16px);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+.nav-card{
+background:var(--card-bg);
+border:1px solid var(--border);
+padding:24px;
+border-radius:20px;
+cursor:pointer;
+transition:.4s;
+backdrop-filter:blur(16px);
+display:flex;
+align-items:center;
+gap:20px;
+}
+.nav-card:hover{
+border-color:var(--accent);
+transform:scale(1.02);
+}
+.icon-box{
+width:56px;height:56px;
+background:rgba(59,130,246,.1);
+border-radius:14px;
+display:flex;align-items:center;justify-content:center;
+font-size:24px;color:var(--accent);
+}
+.content b{display:block;font-size:18px;}
+.content span{font-size:13px;color:var(--text-dim);}
 
-        .nav-card:hover {
-            border-color: var(--accent);
-            background: rgba(31, 41, 55, 0.9);
-            transform: scale(1.02);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-        }
+.form-section{display:none;}
 
-        .nav-card .icon-box {
-            width: 56px;
-            height: 56px;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: var(--accent);
-        }
+.card{
+background:var(--card-bg);
+padding:32px;
+border-radius:24px;
+border:1px solid var(--border);
+}
 
-        .nav-card .content b {
-            display: block;
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
+.back-btn{
+background:none;border:none;
+color:var(--text-dim);
+font-size:13px;
+cursor:pointer;
+margin-bottom:20px;
+}
 
-        .nav-card .content span {
-            font-size: 13px;
-            color: var(--text-dim);
-        }
+input,textarea{
+width:100%;
+background:rgba(0,0,0,.3);
+border:1px solid var(--border);
+padding:14px 16px;
+margin:8px 0 16px;
+border-radius:12px;
+color:white;
+box-sizing:border-box;
+}
 
-        /* ===== FORMS ===== */
-        .form-section {
-            display: none;
-            animation: slideUp 0.5s ease-out;
-        }
+input:focus,textarea:focus{
+outline:none;
+border-color:var(--accent);
+background:var(--input-focus);
+box-shadow:0 0 0 4px var(--accent-glow);
+}
 
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            padding: 32px;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+.check-strip{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:8px;
+padding:14px;
+background:rgba(255,255,255,.03);
+border-radius:12px;
+}
 
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: 0.2s;
-        }
+.check-strip input{
+width:20px;height:20px;
+accent-color:var(--accent);
+}
 
-        .back-btn:hover { color: var(--accent); }
+.submit-btn{
+width:100%;
+padding:18px;
+background:var(--accent);
+color:white;
+border:none;
+border-radius:14px;
+font-weight:700;
+font-size:16px;
+cursor:pointer;
+margin-top:24px;
+}
 
-        input, textarea {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            padding: 14px 16px;
-            margin: 8px 0 16px;
-            border-radius: 12px;
-            color: white;
-            box-sizing: border-box;
-            font-family: inherit;
-            transition: 0.3s;
-        }
+#statusModal{
+position:fixed;
+inset:0;
+background:rgba(3,7,18,.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:2000;
+}
 
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: var(--input-focus);
-            box-shadow: 0 0 0 4px var(--accent-glow);
-        }
-
-        /* ===== PREMIUM CHECKBOXES ===== */
-        .check-strip {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-            padding: 14px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .check-strip:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--border);
-        }
-
-        .check-strip input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin: 0;
-            accent-color: var(--accent);
-            cursor: pointer;
-        }
-
-        .check-strip label {
-            font-size: 14px;
-            cursor: pointer;
-            user-select: none;
-            flex: 1;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 24px;
-            transition: 0.3s;
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.4);
-        }
-
-        /* ===== MODAL ===== */
-        #statusModal {
-            position: fixed;
-            inset: 0;
-            background: rgba(3, 7, 18, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            backdrop-filter: blur(10px);
-        }
-
-        .status-content {
-            text-align: center;
-            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(30px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-    </style>
+.spinner{
+width:50px;height:50px;
+border:3px solid rgba(255,255,255,.1);
+border-top-color:var(--accent);
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin:auto;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <header>
-        <h1>CORE SYSTEM</h1>
-        <p>Operational Reporting Interface</p>
-    </header>
 
-    <div id="navScreen">
-        <div class="nav-card" onclick="openSection('checkin')">
-            <div class="icon-box">⚡</div>
-            <div class="content">
-                <b>System Check-In</b>
-                <span>Initialize workspace and safety protocols</span>
-            </div>
-        </div>
-        <div class="nav-card" onclick="openSection('checkout')">
-            <div class="icon-box">🛡️</div>
-            <div class="content">
-                <b>System Check-Out</b>
-                <span>Verify completion and secure station</span>
-            </div>
-        </div>
-    </div>
+<header>
+<h1>CORE SYSTEM</h1>
+<p>Operational Reporting Interface</p>
+</header>
 
-    <div id="checkinForm" class="form-section">
-        <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-        <div class="card">
-            <h2 style="margin: 0 0 24px; font-size: 22px;">Check In Protocol</h2>
-            <form id="ci_form">
-                <label style="font-size:12px; color:var(--text-dim);">OPERATOR NAME</label>
-                <input id="ci_name" placeholder="Enter Full Name" required>
-                
-                <label style="font-size:12px; color:var(--text-dim);">STATION ID</label>
-                <input id="ci_table" placeholder="Table Name/Number" required>
-                
-                <label style="font-size:12px; color:var(--text-dim);">OBJECTIVES</label>
-                <input id="ci_work" placeholder="What is your plan for today?" required>
+<div id="navScreen">
+<div class="nav-card" onclick="openSection('checkin')">
+<div class="icon-box">⚡</div>
+<div class="content">
+<b>System Check-In</b>
+<span>Initialize workspace</span>
+</div>
+</div>
 
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                    <div>
-                        <label style="font-size:11px; color:var(--text-dim);">DATE</label>
-                        <input type="date" id="ci_date" required>
-                    </div>
-                    <div>
-                        <label style="font-size:11px; color:var(--text-dim);">TIME</label>
-                        <input type="time" id="ci_time" required>
-                    </div>
-                </div>
+<div class="nav-card" onclick="openSection('checkout')">
+<div class="icon-box">🛡️</div>
+<div class="content">
+<b>System Check-Out</b>
+<span>Secure station</span>
+</div>
+</div>
+</div>
 
-                <div class="check-strip"><input type="checkbox" id="ci_clean"><label for="ci_clean">Is table cleaned?</label></div>
-                <div class="check-strip"><input type="checkbox" id="ci_cctv"><label for="ci_cctv">Is CCTV working?</label></div>
-                <div class="check-strip"><input type="checkbox" id="ci_waste"><label for="ci_waste">Waste basket available?</label></div>
-                <div class="check-strip"><input type="checkbox" id="ci_internet"><label for="ci_internet">Internet connection perfect?</label></div>
+<!-- CHECK IN -->
+<div id="checkinForm" class="form-section">
+<button class="back-btn" onclick="goHome()">← Back</button>
+<div class="card">
+<form id="ci_form">
 
-                <button type="submit" class="submit-btn">EXECUTE CHECK-IN</button>
-            </form>
-        </div>
-    </div>
+<input id="ci_name" placeholder="Full Name" required>
+<input id="ci_table" placeholder="Table Name" required>
+<input id="ci_work" placeholder="Work Plan" required>
 
-    <div id="checkoutForm" class="form-section">
-        <button class="back-btn" onclick="goHome()">← Back to Dashboard</button>
-        <div class="card">
-            <h2 style="margin: 0 0 24px; font-size: 22px;">Check Out Protocol</h2>
-            <form id="co_form">
-                <input id="co_name" placeholder="Name" required>
-                <input id="co_table" placeholder="Table Name" required>
-                <input id="co_work" placeholder="Work Summary" required>
-                
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                    <input type="date" id="co_date" required>
-                    <input type="time" id="co_time" required>
-                </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<input type="date" id="ci_date" required>
+<input type="time" id="ci_time" required>
+</div>
 
-                <textarea id="co_done" placeholder="What work did you complete today?" required></textarea>
-                <textarea id="co_day" placeholder="Operational feedback / How was your day?" required></textarea>
+<div class="check-strip"><input type="checkbox" id="ci_clean"> Table Cleaned</div>
+<div class="check-strip"><input type="checkbox" id="ci_cctv"> CCTV Working</div>
+<div class="check-strip"><input type="checkbox" id="ci_waste"> Waste Basket Available</div>
+<div class="check-strip"><input type="checkbox" id="ci_internet"> Internet Perfect</div>
 
-                <div class="check-strip"><input type="checkbox" id="co_clean"><label for="co_clean">Is table cleaned?</label></div>
-                <div class="check-strip"><input type="checkbox" id="co_floor"><label for="co_floor">Floor clean & tidy?</label></div>
-                <div class="check-strip"><input type="checkbox" id="co_tools"><label for="co_tools">All tools/components returned?</label></div>
-                <div class="check-strip"><input type="checkbox" id="co_cable"><label for="co_cable">All cables safe?</label></div>
+<button class="submit-btn">EXECUTE CHECK-IN</button>
+</form>
+</div>
+</div>
 
-                <button type="submit" class="submit-btn">TERMINATE SESSION</button>
-            </form>
-        </div>
-    </div>
+<!-- CHECK OUT -->
+<div id="checkoutForm" class="form-section">
+<button class="back-btn" onclick="goHome()">← Back</button>
+<div class="card">
+<form id="co_form">
+
+<input id="co_name" placeholder="Name" required>
+<input id="co_table" placeholder="Table Name" required>
+<input id="co_work" placeholder="Work Summary" required>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<input type="date" id="co_date" required>
+<input type="time" id="co_time" required>
+</div>
+
+<textarea id="co_done" placeholder="Work Completed" required></textarea>
+<textarea id="co_day" placeholder="How was your day?" required></textarea>
+
+<div class="check-strip"><input type="checkbox" id="co_clean"> Table Cleaned</div>
+<div class="check-strip"><input type="checkbox" id="co_floor"> Floor Clean</div>
+<div class="check-strip"><input type="checkbox" id="co_tools"> Tools Returned</div>
+<div class="check-strip"><input type="checkbox" id="co_cable"> Cables Safe</div>
+
+<button class="submit-btn">TERMINATE SESSION</button>
+</form>
+</div>
+</div>
+
 </div>
 
 <div id="statusModal">
-    <div class="status-content">
-        <div id="loader">
-            <div class="spinner"></div>
-            <p style="letter-spacing: 2px; font-size: 12px; color: var(--text-dim);">UPLOADING DATA...</p>
-        </div>
-        <div id="success" style="display:none;">
-            <div style="font-size: 60px; margin-bottom: 20px;">💠</div>
-            <h2 style="margin:0;">Entry Logged</h2>
-            <p style="color: var(--text-dim); font-size: 14px; margin-top: 10px; line-height: 1.6;">
-                💙 Curiosity Weekends<br>Unlearn and relearn with us...
-            </p>
-        </div>
-    </div>
+<div>
+<div class="spinner"></div>
+<p style="text-align:center;margin-top:20px;">Uploading...</p>
+</div>
 </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
 
-    function openSection(id) {
-        document.getElementById('navScreen').style.display = 'none';
-        document.getElementById(id + 'Form').style.display = 'block';
-        window.scrollTo(0,0);
-    }
+const API="https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
 
-    function goHome() {
-        document.querySelectorAll('.form-section').forEach(f => f.style.display = 'none');
-        document.getElementById('navScreen').style.display = 'grid';
-    }
+function openSection(id){
+document.getElementById('navScreen').style.display='none';
+document.getElementById(id+'Form').style.display='block';
+}
 
-    async function handleSubmission(e, type) {
-        e.preventDefault();
-        const modal = document.getElementById('statusModal');
-        const loader = document.getElementById('loader');
-        const success = document.getElementById('success');
-        
-        modal.style.display = 'flex';
-        loader.style.display = 'block';
-        success.style.display = 'none';
+function goHome(){
+document.querySelectorAll('.form-section').forEach(f=>f.style.display='none');
+document.getElementById('navScreen').style.display='grid';
+}
 
-        const p = type === 'checkin' ? 'ci' : 'co';
-        const data = {
-            type: type,
-            name: document.getElementById(p+'_name').value,
-            table: document.getElementById(p+'_table').value,
-            work: document.getElementById(p+'_work').value,
-            date: document.getElementById(p+'_date').value,
-            time: document.getElementById(p+'_time').value,
-            cleaned: document.getElementById(p+'_clean')?.checked ? "Yes" : "No",
-            cctv: document.getElementById('ci_cctv')?.checked ? "Yes" : "No",
-            done: document.getElementById('co_done')?.value || "",
-            day: document.getElementById('co_day')?.value || "",
-            floor: document.getElementById('co_floor')?.checked ? "Yes" : "No",
-            tools: document.getElementById('co_tools')?.checked ? "Yes" : "No",
-            cable: document.getElementById('co_cable')?.checked ? "Yes" : "No"
-        };
+async function handleSubmission(e,type){
+e.preventDefault();
 
-        try {
-            await fetch(API, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(data)
-            });
-            
-            loader.style.display = 'none';
-            success.style.display = 'block';
-            
-            setTimeout(() => {
-                modal.style.display = 'none';
-                e.target.reset();
-                goHome();
-            }, 2500);
-        } catch (err) {
-            modal.style.display = 'none';
-            alert("Connection Error. Please check your internet.");
-        }
-    }
+document.getElementById("statusModal").style.display="flex";
 
-    document.getElementById('ci_form').onsubmit = (e) => handleSubmission(e, 'checkin');
-    document.getElementById('co_form').onsubmit = (e) => handleSubmission(e, 'checkout');
+const p=type==="checkin"?"ci":"co";
+
+const data={
+type:type,
+name:document.getElementById(p+"_name").value,
+table:document.getElementById(p+"_table").value,
+work:document.getElementById(p+"_work").value,
+date:document.getElementById(p+"_date").value,
+time:document.getElementById(p+"_time").value,
+
+cleaned:document.getElementById(p+"_clean")?.checked?"Yes":"No",
+cctv:document.getElementById("ci_cctv")?.checked?"Yes":"No",
+waste:document.getElementById("ci_waste")?.checked?"Yes":"No",
+internet:document.getElementById("ci_internet")?.checked?"Yes":"No",
+
+done:document.getElementById("co_done")?.value||"",
+day:document.getElementById("co_day")?.value||"",
+floor:document.getElementById("co_floor")?.checked?"Yes":"No",
+tools:document.getElementById("co_tools")?.checked?"Yes":"No",
+cable:document.getElementById("co_cable")?.checked?"Yes":"No"
+};
+
+await fetch(API,{
+method:"POST",
+mode:"no-cors",
+body:JSON.stringify(data)
+});
+
+setTimeout(()=>{
+document.getElementById("statusModal").style.display="none";
+e.target.reset();
+goHome();
+},2000);
+}
+
+document.getElementById("ci_form").onsubmit=e=>handleSubmission(e,"checkin");
+document.getElementById("co_form").onsubmit=e=>handleSubmission(e,"checkout");
+
 </script>
 
 </body>
