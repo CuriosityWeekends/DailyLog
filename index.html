@@ -1,314 +1,1116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Core System Alpha</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core System Alpha</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#050505">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3208/3208726.png">
 
-<style>
-:root{
---bg:#030712;
---card-bg:rgba(17,24,39,0.8);
---accent:#3b82f6;
---accent-glow:rgba(59,130,246,0.3);
---text-main:#f9fafb;
---text-dim:#9ca3af;
---border:rgba(255,255,255,0.08);
---input-focus:rgba(59,130,246,0.15);
-}
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-body{
-margin:0;
-font-family:'Plus Jakarta Sans',sans-serif;
-background-color:var(--bg);
-background-image:
-radial-gradient(at 0% 0%,rgba(59,130,246,0.15) 0px,transparent 50%),
-radial-gradient(at 100% 100%,rgba(37,99,235,0.1) 0px,transparent 50%);
-color:var(--text-main);
-min-height:100vh;
-display:flex;
-justify-content:center;
-}
+    <!-- Flatpickr for Modern Date & Time Selector -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-.container{
-width:100%;
-max-width:480px;
-padding:40px 20px;
-}
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-header{text-align:center;margin-bottom:50px;}
-header h1{
-font-size:28px;
-font-weight:800;
-margin:0;
-background:linear-gradient(135deg,#fff 0%,#93c5fd 100%);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-header p{color:var(--text-dim);font-size:14px;margin-top:8px;}
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: rgba(20, 20, 22, 0.65);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent: #4f46e5;
+            --accent-glow: rgba(79, 70, 229, 0.5);
+            --accent-secondary: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --input-bg: rgba(0, 0, 0, 0.3);
+            color-scheme: dark;
+        }
 
-#navScreen{display:grid;gap:16px;}
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-.nav-card{
-background:var(--card-bg);
-border:1px solid var(--border);
-padding:24px;
-border-radius:20px;
-cursor:pointer;
-transition:.4s;
-backdrop-filter:blur(16px);
-display:flex;
-align-items:center;
-gap:20px;
-}
-.nav-card:hover{
-border-color:var(--accent);
-transform:scale(1.02);
-}
-.icon-box{
-width:56px;height:56px;
-background:rgba(59,130,246,.1);
-border-radius:14px;
-display:flex;align-items:center;justify-content:center;
-font-size:24px;color:var(--accent);
-}
-.content b{display:block;font-size:18px;}
-.content span{font-size:13px;color:var(--text-dim);}
+        /* Animated Background Orbs */
+        .bg-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #0a0a0c 0%, #000000 100%);
+        }
 
-.form-section{display:none;}
+        .blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: float 12s infinite alternate ease-in-out;
+            border-radius: 50%;
+        }
 
-.card{
-background:var(--card-bg);
-padding:32px;
-border-radius:24px;
-border:1px solid var(--border);
-}
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            max-width: 600px;
+            max-height: 600px;
+            background: rgba(79, 70, 229, 0.25);
+        }
 
-.back-btn{
-background:none;border:none;
-color:var(--text-dim);
-font-size:13px;
-cursor:pointer;
-margin-bottom:20px;
-}
+        .blob-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            max-width: 700px;
+            max-height: 700px;
+            background: rgba(14, 165, 233, 0.15);
+            animation-delay: -5s;
+        }
 
-input,textarea{
-width:100%;
-background:rgba(0,0,0,.3);
-border:1px solid var(--border);
-padding:14px 16px;
-margin:8px 0 16px;
-border-radius:12px;
-color:white;
-box-sizing:border-box;
-}
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
 
-input:focus,textarea:focus{
-outline:none;
-border-color:var(--accent);
-background:var(--input-focus);
-box-shadow:0 0 0 4px var(--accent-glow);
-}
+            100% {
+                transform: translate(50px, 80px) scale(1.1);
+            }
+        }
 
-.check-strip{
-display:flex;
-align-items:center;
-gap:12px;
-margin-bottom:8px;
-padding:14px;
-background:rgba(255,255,255,.03);
-border-radius:12px;
-}
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 1;
+        }
 
-.check-strip input{
-width:20px;height:20px;
-accent-color:var(--accent);
-}
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: slideDownFade 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-.submit-btn{
-width:100%;
-padding:18px;
-background:var(--accent);
-color:white;
-border:none;
-border-radius:14px;
-font-weight:700;
-font-size:16px;
-cursor:pointer;
-margin-top:24px;
-}
+        header h1 {
+            font-size: 34px;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
 
-#statusModal{
-position:fixed;
-inset:0;
-background:rgba(3,7,18,.9);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:2000;
-}
+        header p {
+            color: var(--text-dim);
+            font-size: 15px;
+            font-weight: 500;
+            margin-top: 8px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
 
-.spinner{
-width:50px;height:50px;
-border:3px solid rgba(255,255,255,.1);
-border-top-color:var(--accent);
-border-radius:50%;
-animation:spin 1s linear infinite;
-margin:auto;
-}
-@keyframes spin{to{transform:rotate(360deg);}}
-</style>
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 24px 40px -8px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+        }
+
+        #labNowBanner {
+            margin-bottom: 24px;
+            text-align: center;
+            cursor: pointer;
+            padding: 20px;
+            transition: all 0.4s ease;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1), pulseGlow 4s infinite alternate;
+        }
+
+        #labNowBanner:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 20px -10px var(--accent-glow);
+            }
+
+            100% {
+                box-shadow: 0 0 40px 0px var(--accent-glow);
+            }
+        }
+
+        #navScreen {
+            display: grid;
+            gap: 16px;
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 0 24px var(--accent-glow);
+        }
+
+        .nav-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+            transform: skewX(-20deg);
+            transition: 0.6s;
+        }
+
+        .nav-card:hover::after {
+            left: 150%;
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(14, 165, 233, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: #fff;
+            box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+
+        .content b {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .content span {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDownFade {
+            0% {
+                opacity: 0;
+                transform: translateY(-24px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-4px);
+        }
+
+        /* Inputs */
+        input,
+        textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            padding: 16px;
+            margin: 8px 0 16px;
+            border-radius: 14px;
+            color: white;
+            font-family: inherit;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #64748b;
+        }
+
+        /* Custom Checkbox Toggle */
+        .check-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-weight: 500;
+        }
+
+        .check-strip:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .check-strip:has(input:checked) {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .check-strip input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 44px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            margin: 0;
+            border: 1px solid transparent;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .check-strip input[type="checkbox"]::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .check-strip input[type="checkbox"]:checked {
+            background: var(--success);
+        }
+
+        .check-strip input[type="checkbox"]:checked::after {
+            transform: translateX(20px);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 24px -8px var(--accent-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px -8px rgba(79, 70, 229, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Modal */
+        #statusModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .spinner {
+            width: 54px;
+            height: 54px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent-secondary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* User Bubble */
+        .user-bubble {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            padding: 16px 20px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-bubble:hover {
+            background: rgba(79, 70, 229, 0.1);
+            border-color: var(--accent);
+            transform: scale(1.02);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Flatpickr Custom Glassmorphism Theme */
+        .flatpickr-calendar {
+            background: rgba(20, 20, 22, 0.85) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(24px) !important;
+            -webkit-backdrop-filter: blur(24px) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 24px 40px -8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(79, 70, 229, 0.15) !important;
+            color: #f8fafc !important;
+            font-family: inherit !important;
+            padding: 10px !important;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            background: transparent !important;
+            color: #f8fafc !important;
+            fill: #f8fafc !important;
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            background: #141416 !important;
+            color: #f8fafc !important;
+        }
+
+        span.flatpickr-weekday {
+            color: #94a3b8 !important;
+            font-weight: 600 !important;
+        }
+
+        .flatpickr-day {
+            color: #f8fafc !important;
+            border-radius: 12px !important;
+            border: 1px solid transparent !important;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .flatpickr-day:hover:not(.selected) {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            transform: scale(1.05);
+        }
+
+        .flatpickr-day.selected {
+            background: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4) !important;
+            font-weight: bold;
+        }
+
+        .flatpickr-day.today {
+            border-color: rgba(14, 165, 233, 0.5) !important;
+        }
+
+        .flatpickr-time {
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            margin-top: 10px !important;
+            padding-top: 10px !important;
+        }
+
+        .flatpickr-time input,
+        .flatpickr-time .flatpickr-time-separator,
+        .flatpickr-time .flatpickr-am-pm {
+            color: #f8fafc !important;
+        }
+
+        .flatpickr-time input:hover,
+        .flatpickr-time input:focus,
+        .flatpickr-time .flatpickr-am-pm:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .flatpickr-calendar.arrowTop:after,
+        .flatpickr-calendar.arrowTop:before,
+        .flatpickr-calendar.arrowBottom:after,
+        .flatpickr-calendar.arrowBottom:before {
+            display: none !important;
+        }
+
+        .flatpickr-input[readonly] {
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3) !important;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
 
-<header>
-<h1>CORE SYSTEM</h1>
-<p>Operational Reporting Interface</p>
-</header>
+    <div class="container">
+        <datalist id="tableList">
+            <option value="Table 1">
+            <option value="Table 2">
+            <option value="Table 3">
+            <option value="Table A">
+            <option value="Table B">
+            <option value="Main Desk">
+            <option value="Studio">
+        </datalist>
 
-<div id="navScreen">
-<div class="nav-card" onclick="openSection('checkin')">
-<div class="icon-box">⚡</div>
-<div class="content">
-<b>System Check-In</b>
-<span>Initialize workspace</span>
-</div>
-</div>
+        <header>
+            <h1>CORE SYSTEM</h1>
+            <p>Operational Interface</p>
+        </header>
 
-<div class="nav-card" onclick="openSection('checkout')">
-<div class="icon-box">🛡️</div>
-<div class="content">
-<b>System Check-Out</b>
-<span>Secure station</span>
-</div>
-</div>
-</div>
+        <div id="labNowBanner" class="card" onclick="openSection('activeUsers')">
+            <b style="font-size: 18px; color: var(--accent-secondary); display: block; margin-bottom: 6px;">
+                People at Lab Now: <span id="labCount" style="color: white;">...</span>
+            </b>
+            <div style="font-size: 14px; color: var(--text-dim);">Tap to view active sessions & easy checkout</div>
+        </div>
 
-<!-- CHECK IN -->
-<div id="checkinForm" class="form-section">
-<button class="back-btn" onclick="goHome()">← Back</button>
-<div class="card">
-<form id="ci_form">
+        <div id="navScreen">
+            <div class="nav-card" onclick="openSection('stats')">
+                <div class="icon-box"
+                    style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.2));">🔥
+                </div>
+                <div class="content">
+                    <b>My Stats</b>
+                    <span>View streaks & history</span>
+                </div>
+            </div>
 
-<input id="ci_name" placeholder="Full Name" required>
-<input id="ci_table" placeholder="Table Name" required>
-<input id="ci_work" placeholder="Work Plan" required>
+            <div class="nav-card" onclick="openSection('checkin')">
+                <div class="icon-box">⚡</div>
+                <div class="content">
+                    <b>System Check-In</b>
+                    <span>Initialize your workspace</span>
+                </div>
+            </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-<input type="date" id="ci_date" required>
-<input type="time" id="ci_time" required>
-</div>
+            <div class="nav-card" onclick="openSection('checkout')">
+                <div class="icon-box">🛡️</div>
+                <div class="content">
+                    <b>System Check-Out</b>
+                    <span>Secure station & submit logs</span>
+                </div>
+            </div>
+        </div>
 
-<div class="check-strip"><input type="checkbox" id="ci_clean"> Table Cleaned</div>
-<div class="check-strip"><input type="checkbox" id="ci_cctv"> CCTV Working</div>
-<div class="check-strip"><input type="checkbox" id="ci_waste"> Waste Basket Available</div>
-<div class="check-strip"><input type="checkbox" id="ci_internet"> Internet Perfect</div>
+        <!-- ACTIVE USERS -->
+        <div id="activeUsersForm" class="form-section">
+            <button class="back-btn" onclick="goHome()">
+                <span style="font-size: 18px; line-height: 1;">&larr;</span> Back to Home
+            </button>
+            <div class="card">
+                <h3 style="margin-top:0; margin-bottom: 24px; font-weight: 700;">Currently Active Sessions</h3>
+                <div id="activeUsersList" style="display:flex; flex-direction:column; gap:12px;">
+                    <p style="color:var(--text-dim); text-align:center;">Loading database...</p>
+                </div>
+            </div>
+        </div>
 
-<button class="submit-btn">EXECUTE CHECK-IN</button>
-</form>
-</div>
-</div>
+        <!-- MY STATS -->
+        <div id="statsForm" class="form-section">
+            <button class="back-btn" onclick="goHome()">
+                <span style="font-size: 18px; line-height: 1;">&larr;</span> Back to Home
+            </button>
+            <div class="card" style="text-align: center;">
+                <h3 style="margin-top:0; font-weight: 700;">Your Lab Profile</h3>
+                <div style="font-size: 64px; margin: 20px 0; animation: pulseGlow 3s infinite alternate;">🔥</div>
+                <h2 style="font-size: 36px; margin: 0; font-weight: 800; color: #fbbf24;" id="streakDisplay">0 Days</h2>
+                <p
+                    style="color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; font-size: 14px; margin-top: 8px;">
+                    Current Lab Streak</p>
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--card-border);">
+                    <div style="font-size: 24px; font-weight: 700;" id="totalSessionsDisplay">0</div>
+                    <p style="color: var(--text-dim); font-size: 14px; margin: 4px 0 0;">Total Check-Ins Tracked Locally
+                    </p>
+                </div>
+            </div>
+        </div>
 
-<!-- CHECK OUT -->
-<div id="checkoutForm" class="form-section">
-<button class="back-btn" onclick="goHome()">← Back</button>
-<div class="card">
-<form id="co_form">
+        <!-- CHECK IN -->
+        <div id="checkinForm" class="form-section">
+            <button class="back-btn" onclick="goHome()">
+                <span style="font-size: 18px; line-height: 1;">&larr;</span> Back to Home
+            </button>
+            <div class="card">
+                <form id="ci_form">
+                    <input id="ci_name" placeholder="Full Name" required autocomplete="name">
+                    <input id="ci_table" list="tableList" placeholder="Table Name" required autocomplete="off">
+                    <input id="ci_work" placeholder="Primary Work Plan for Today" required>
+                    <div class="grid-2">
+                        <input type="date" id="ci_date" required>
+                        <input type="time" id="ci_time" required>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <label class="check-strip"><span>Table Cleaned & Ready</span> <input type="checkbox"
+                                id="ci_clean"></label>
+                        <label class="check-strip"><span>CCTV Operating</span> <input type="checkbox"
+                                id="ci_cctv"></label>
+                        <label class="check-strip"><span>Waste Basket Empty</span> <input type="checkbox"
+                                id="ci_waste"></label>
+                        <label class="check-strip"><span>Internet Stable</span> <input type="checkbox"
+                                id="ci_internet"></label>
+                    </div>
+                    <button class="submit-btn" type="submit">INITIALIZE SESSION</button>
+                </form>
+            </div>
+        </div>
 
-<input id="co_name" placeholder="Name" required>
-<input id="co_table" placeholder="Table Name" required>
-<input id="co_work" placeholder="Work Summary" required>
+        <!-- CHECK OUT -->
+        <div id="checkoutForm" class="form-section">
+            <button class="back-btn" onclick="goHome()">
+                <span style="font-size: 18px; line-height: 1;">&larr;</span> Back to Home
+            </button>
+            <div class="card">
+                <form id="co_form">
+                    <input id="co_name" placeholder="Full Name" required autocomplete="name">
+                    <input id="co_table" list="tableList" placeholder="Table Name" required autocomplete="off">
+                    <input id="co_work" placeholder="Brief Work Summary" required>
+                    <div class="grid-2">
+                        <input type="date" id="co_date" required>
+                        <input type="time" id="co_time" required>
+                    </div>
+                    <textarea id="co_done" placeholder="Detailed Work Completed" required rows="3"
+                        oninput="saveDraft('co_done')"></textarea>
+                    <textarea id="co_day" placeholder="How was your day? Any feedback?" required rows="2"
+                        oninput="saveDraft('co_day')"></textarea>
+                    <div style="margin-top: 12px;">
+                        <label class="check-strip"><span>Table Wiped Clean</span> <input type="checkbox"
+                                id="co_clean"></label>
+                        <label class="check-strip"><span>Floor Swept/Clean</span> <input type="checkbox"
+                                id="co_floor"></label>
+                        <label class="check-strip"><span>Tools Handed Back</span> <input type="checkbox"
+                                id="co_tools"></label>
+                        <label class="check-strip"><span>Cables Organized</span> <input type="checkbox"
+                                id="co_cable"></label>
+                    </div>
+                    <button class="submit-btn"
+                        style="background: linear-gradient(135deg, var(--danger), #b91c1c); box-shadow: 0 8px 24px -8px rgba(239, 68, 68, 0.5);"
+                        type="submit">TERMINATE SESSION</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-<input type="date" id="co_date" required>
-<input type="time" id="co_time" required>
-</div>
+    <div id="statusModal">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <p style="text-align:center; margin-top:24px; font-weight: 600; font-size: 18px; letter-spacing: 0.02em;">
+                Syncing Data...</p>
+        </div>
+    </div>
 
-<textarea id="co_done" placeholder="Work Completed" required></textarea>
-<textarea id="co_day" placeholder="How was your day?" required></textarea>
+    <script>
+        const API = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
+        const SHEET_ID = "1_7g_XuKW0TnjV2no4it9lrljoViP-ID1YlsQvsKQs2M";
+        let activeLabUsers = [];
 
-<div class="check-strip"><input type="checkbox" id="co_clean"> Table Cleaned</div>
-<div class="check-strip"><input type="checkbox" id="co_floor"> Floor Clean</div>
-<div class="check-strip"><input type="checkbox" id="co_tools"> Tools Returned</div>
-<div class="check-strip"><input type="checkbox" id="co_cable"> Cables Safe</div>
+        async function fetchActiveUsers() {
+            try {
+                let res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
+                let text = await res.text();
+                let json = JSON.parse(text.replace("/*O_o*/", "").replace("google.visualization.Query.setResponse(", "").slice(0, -2));
 
-<button class="submit-btn">TERMINATE SESSION</button>
-</form>
-</div>
-</div>
+                let cols = json.table.cols.map(c => c.label.toLowerCase());
+                let rows = json.table.rows.map(r => r.c.map(x => x ? x.v : ""));
+                let allData = rows.map(r => {
+                    let o = {}; cols.forEach((k, i) => o[k] = r[i]); return o;
+                });
 
-</div>
+                let latest = {};
+                allData.forEach(r => { if (r.name) latest[r.name] = r; });
+                activeLabUsers = Object.values(latest).filter(r => r.type === "checkin");
+                document.getElementById('labCount').innerText = activeLabUsers.length;
+                renderActiveUsers();
+            } catch (e) {
+                document.getElementById('labCount').innerText = "?";
+            }
+        }
 
-<div id="statusModal">
-<div>
-<div class="spinner"></div>
-<p style="text-align:center;margin-top:20px;">Uploading...</p>
-</div>
-</div>
+        function renderActiveUsers() {
+            let list = document.getElementById('activeUsersList');
+            if (!list) return;
+            list.innerHTML = "";
+            if (activeLabUsers.length === 0) {
+                list.innerHTML = "<p style='color:var(--text-dim); text-align:center; padding: 20px 0;'>No active sessions currently.</p>";
+                return;
+            }
+            activeLabUsers.forEach(u => {
+                let div = document.createElement('div');
+                div.className = 'user-bubble';
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <b style="font-size:16px;">${u.name}</b>
+                        <span style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 12px; font-size: 12px;">${u.table}</span>
+                    </div>
+                    <div style="font-size:13px; margin-top:10px; color:var(--accent-secondary); font-weight: 600;">Tap for Easy Check-Out &rarr;</div>`;
+                div.onclick = () => { easyCheckout(u); };
+                list.appendChild(div);
+            });
+        }
 
-<script>
+        function easyCheckout(user) {
+            openSection('checkout');
+            document.getElementById('co_name').value = user.name || "";
+            document.getElementById('co_table').value = user.table || "";
+            document.getElementById('co_work').value = user.work || "";
+        }
 
-const API="https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
+        window.addEventListener('load', () => {
+            fetchActiveUsers();
 
-function openSection(id){
-document.getElementById('navScreen').style.display='none';
-document.getElementById(id+'Form').style.display='block';
-}
+            flatpickr("#ci_date, #co_date", {
+                dateFormat: "Y-m-d",
+                disableMobile: "true",
+                animate: true
+            });
 
-function goHome(){
-document.querySelectorAll('.form-section').forEach(f=>f.style.display='none');
-document.getElementById('navScreen').style.display='grid';
-}
+            flatpickr("#ci_time, #co_time", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                disableMobile: "true",
+                animate: true
+            });
+        });
 
-async function handleSubmission(e,type){
-e.preventDefault();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail', err));
+        }
 
-document.getElementById("statusModal").style.display="flex";
+        function saveDraft(id) { localStorage.setItem('draft_' + id, document.getElementById(id).value); }
+        function loadDrafts() {
+            const doneDraft = localStorage.getItem('draft_co_done');
+            if (doneDraft) document.getElementById('co_done').value = doneDraft;
+            const dayDraft = localStorage.getItem('draft_co_day');
+            if (dayDraft) document.getElementById('co_day').value = dayDraft;
+        }
 
-const p=type==="checkin"?"ci":"co";
+        function saveOffline(payload) {
+            let queue = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
+            queue.push(payload);
+            localStorage.setItem('offlineQueue', JSON.stringify(queue));
+        }
 
-const data={
-type:type,
-name:document.getElementById(p+"_name").value,
-table:document.getElementById(p+"_table").value,
-work:document.getElementById(p+"_work").value,
-date:document.getElementById(p+"_date").value,
-time:document.getElementById(p+"_time").value,
+        window.addEventListener('online', async () => {
+            let queue = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
+            if (queue.length === 0) return;
+            for (let data of queue) {
+                try { await fetch(API, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); } catch (e) { }
+            }
+            localStorage.removeItem('offlineQueue');
+            alert("🚀 You are back online! Offline logs were synced automatically.");
+        });
 
-cleaned:document.getElementById(p+"_clean")?.checked?"Yes":"No",
-cctv:document.getElementById("ci_cctv")?.checked?"Yes":"No",
-waste:document.getElementById("ci_waste")?.checked?"Yes":"No",
-internet:document.getElementById("ci_internet")?.checked?"Yes":"No",
+        function openSection(id) {
+            document.getElementById('navScreen').style.display = 'none';
+            document.getElementById('labNowBanner').style.display = 'none';
+            document.querySelectorAll('.form-section').forEach(f => {
+                f.style.display = 'none';
+                f.classList.remove('active');
+            });
+            let sec = document.getElementById(id + 'Form');
+            sec.style.display = 'block';
+            sec.classList.add('active');
 
-done:document.getElementById("co_done")?.value||"",
-day:document.getElementById("co_day")?.value||"",
-floor:document.getElementById("co_floor")?.checked?"Yes":"No",
-tools:document.getElementById("co_tools")?.checked?"Yes":"No",
-cable:document.getElementById("co_cable")?.checked?"Yes":"No"
-};
+            const now = new Date();
+            const dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
+            const timeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+            const savedName = localStorage.getItem('core_name') || '';
+            const savedTable = localStorage.getItem('core_table') || '';
 
-await fetch(API,{
-method:"POST",
-mode:"no-cors",
-body:JSON.stringify(data)
-});
+            if (id === 'checkin') {
+                if (document.getElementById('ci_date')._flatpickr) {
+                    document.getElementById('ci_date')._flatpickr.setDate(dateStr);
+                    document.getElementById('ci_time')._flatpickr.setDate(timeStr);
+                } else {
+                    document.getElementById('ci_date').value = dateStr;
+                    document.getElementById('ci_time').value = timeStr;
+                }
+                document.getElementById('ci_name').value = savedName;
+                document.getElementById('ci_table').value = savedTable;
+            } else if (id === 'checkout') {
+                if (document.getElementById('co_date')._flatpickr) {
+                    document.getElementById('co_date')._flatpickr.setDate(dateStr);
+                    document.getElementById('co_time')._flatpickr.setDate(timeStr);
+                } else {
+                    document.getElementById('co_date').value = dateStr;
+                    document.getElementById('co_time').value = timeStr;
+                }
+                document.getElementById('co_name').value = savedName;
+                document.getElementById('co_table').value = savedTable;
+                loadDrafts();
+            } else if (id === 'stats') {
+                updateStatsUI();
+            }
+        }
 
-setTimeout(()=>{
-document.getElementById("statusModal").style.display="none";
-e.target.reset();
-goHome();
-},2000);
-}
+        // Web Audio API Chime Synthesis
+        function playSuccessSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
 
-document.getElementById("ci_form").onsubmit=e=>handleSubmission(e,"checkin");
-document.getElementById("co_form").onsubmit=e=>handleSubmission(e,"checkout");
+                // Root note
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1); // A5
 
-</script>
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
 
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.8);
+
+                // Harmony note
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'triangle';
+                osc2.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                osc2.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.2); // C6
+
+                gain2.gain.setValueAtTime(0, ctx.currentTime + 0.1);
+                gain2.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.15);
+                gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
+
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+
+                osc2.start(ctx.currentTime + 0.1);
+                osc2.stop(ctx.currentTime + 1.2);
+            } catch (e) { console.log('Audio disabled or not supported.'); }
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti !== 'undefined') {
+                var duration = 2000;
+                var end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#4f46e5', '#0ea5e9', '#10b981']
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#4f46e5', '#0ea5e9', '#10b981']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+        }
+
+        // Streak Calculation
+        function updateStatsUI() {
+            let history = JSON.parse(localStorage.getItem('checkin_history') || '[]');
+            document.getElementById('totalSessionsDisplay').innerText = history.length;
+
+            if (history.length === 0) {
+                document.getElementById('streakDisplay').innerText = "0 Days";
+                return;
+            }
+
+            // Sort unique dates descending
+            let uniqueDates = [...new Set(history)].sort().reverse();
+
+            let streak = 0;
+            let checkDate = new Date(); // Start with today
+            checkDate.setHours(0, 0, 0, 0);
+
+            // Check if they checked in today or yesterday to start the streak logic
+            let todayStr = checkDate.toISOString().split('T')[0];
+            let yesterday = new Date(checkDate);
+            yesterday.setDate(yesterday.getDate() - 1);
+            let yesterdayStr = yesterday.toISOString().split('T')[0];
+
+            let activeDate = checkDate;
+
+            // If they didn't check in today, but did yesterday, the streak is alive starting yesterday.
+            if (!uniqueDates.includes(todayStr)) {
+                if (uniqueDates.includes(yesterdayStr)) {
+                    activeDate = yesterday;
+                } else {
+                    document.getElementById('streakDisplay').innerText = "0 Days";
+                    return;
+                }
+            }
+
+            // Count backwards continuously
+            let dString = activeDate.toISOString().split('T')[0];
+            while (uniqueDates.includes(dString)) {
+                streak++;
+                activeDate.setDate(activeDate.getDate() - 1);
+                dString = activeDate.toISOString().split('T')[0];
+            }
+
+            document.getElementById('streakDisplay').innerText = streak + " Day" + (streak > 1 ? "s" : "");
+        }
+
+        function recordCheckInLocal(dateStr) {
+            let history = JSON.parse(localStorage.getItem('checkin_history') || '[]');
+            if (!history.includes(dateStr)) {
+                history.push(dateStr);
+                localStorage.setItem('checkin_history', JSON.stringify(history));
+            }
+        }
+
+        function goHome() {
+            document.querySelectorAll('.form-section').forEach(f => {
+                f.style.display = 'none';
+                f.classList.remove('active');
+            });
+            document.getElementById('navScreen').style.display = 'grid';
+            document.getElementById('labNowBanner').style.display = 'block';
+        }
+
+        async function handleSubmission(e, type) {
+            e.preventDefault();
+            const p = type === "checkin" ? "ci" : "co";
+            const nameVal = document.getElementById(p + "_name").value.trim();
+
+            if (type === "checkin") {
+                const isAlreadyCheckedIn = activeLabUsers.some(u => u.name.trim().toLowerCase() === nameVal.toLowerCase());
+                if (isAlreadyCheckedIn) {
+                    alert("⚠️ You still have an active session! Please complete your Check-Out first before starting a new one.");
+                    return;
+                }
+            }
+
+            document.getElementById("statusModal").style.display = "flex";
+            const tableVal = document.getElementById(p + "_table").value;
+            localStorage.setItem("core_name", nameVal);
+            localStorage.setItem("core_table", tableVal);
+
+            const data = {
+                type: type, name: nameVal, table: tableVal,
+                work: document.getElementById(p + "_work").value,
+                date: document.getElementById(p + "_date").value,
+                time: document.getElementById(p + "_time").value,
+                cleaned: document.getElementById(p + "_clean")?.checked ? "Yes" : "No",
+                cctv: document.getElementById("ci_cctv")?.checked ? "Yes" : "No",
+                waste: document.getElementById("ci_waste")?.checked ? "Yes" : "No",
+                internet: document.getElementById("ci_internet")?.checked ? "Yes" : "No",
+                done: document.getElementById("co_done")?.value || "",
+                day: document.getElementById("co_day")?.value || "",
+                floor: document.getElementById("co_floor")?.checked ? "Yes" : "No",
+                tools: document.getElementById("co_tools")?.checked ? "Yes" : "No",
+                cable: document.getElementById("co_cable")?.checked ? "Yes" : "No"
+            };
+
+            try {
+                await fetch(API, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
+            } catch (err) {
+                if (!navigator.onLine) {
+                    saveOffline(data);
+                    alert("📡 No internet! Your log has been saved offline and will auto-sync when you regain connection.");
+                } else {
+                    document.getElementById("statusModal").style.display = "none";
+                    alert("Submission failed. Please try again.");
+                    return;
+                }
+            }
+
+            if (type === "checkout") {
+                localStorage.removeItem('draft_co_done');
+                localStorage.removeItem('draft_co_day');
+            }
+
+            setTimeout(() => {
+                const pTag = document.querySelector("#statusModal p");
+                const spinner = document.querySelector(".spinner");
+
+                pTag.innerText = "Operation Successful ✅";
+                pTag.style.color = "#34d399";
+                spinner.style.display = "none";
+
+                playSuccessSound();
+                if (type === "checkout" || type === "checkin") {
+                    triggerConfetti();
+                }
+
+                if (type === "checkin") {
+                    recordCheckInLocal(document.getElementById('ci_date').value);
+                }
+
+                setTimeout(() => {
+                    document.getElementById("statusModal").style.display = "none";
+                    pTag.innerText = "Syncing Data...";
+                    pTag.style.color = "white";
+                    spinner.style.display = "block";
+                    e.target.reset();
+                    fetchActiveUsers();
+                    goHome();
+                }, 1800);
+            }, 1000);
+        }
+
+        document.getElementById("ci_form").onsubmit = e => handleSubmission(e, "checkin");
+        document.getElementById("co_form").onsubmit = e => handleSubmission(e, "checkout");
+    </script>
 </body>
+
 </html>

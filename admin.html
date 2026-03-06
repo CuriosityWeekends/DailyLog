@@ -1,549 +1,1204 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Core System Alpha</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
 
-<title>Admin Panel</title>
+  <!-- Flatpickr for Modern Date Selector -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js for Admin Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
+  <style>
+    :root {
+      --bg: #050505;
+      --card-bg: rgba(20, 20, 22, 0.65);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.5);
+      --accent-secondary: #0ea5e9;
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --input-bg: rgba(0, 0, 0, 0.3);
+      --table-hover: rgba(255, 255, 255, 0.03);
+      --table-border: rgba(255, 255, 255, 0.05);
+      color-scheme: dark;
+    }
 
-/* ===== GLOBAL ===== */
+    * {
+      box-sizing: border-box;
+    }
 
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background:#f4f7fc;
-  color:#1f2937;
-}
+    body {
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-.hidden{display:none;}
+    .hidden {
+      display: none !important;
+    }
 
-.container{
-  max-width:1300px;
-  margin:auto;
-  padding:20px;
-}
+    .bg-blobs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #0a0a0c 0%, #000000 100%);
+    }
 
+    .blob {
+      position: absolute;
+      filter: blur(90px);
+      opacity: 0.5;
+      animation: float 12s infinite alternate ease-in-out;
+      border-radius: 50%;
+    }
 
-/* ===== LOGIN ===== */
+    .blob-1 {
+      top: -10%;
+      left: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: rgba(79, 70, 229, 0.25);
+    }
 
-.login-box{
-  max-width:400px;
-  margin:120px auto;
-  background:white;
-  padding:30px;
-  border-radius:12px;
-  box-shadow:0 6px 20px rgba(0,0,0,.1);
-  text-align:center;
-}
+    .blob-2 {
+      bottom: -10%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      background: rgba(14, 165, 233, 0.15);
+      animation-delay: -5s;
+    }
 
-.login-box input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:1px solid #cbd5e1;
-  border-radius:6px;
-}
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
 
-.login-box button{
-  width:100%;
-  padding:12px;
-  background:#2563eb;
-  color:white;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
+      100% {
+        transform: translate(50px, 80px) scale(1.1);
+      }
+    }
 
-#error{color:red;display:none;}
+    .container {
+      max-width: 1300px;
+      margin: auto;
+      padding: 30px 20px;
+      position: relative;
+      z-index: 1;
+    }
 
+    /* Login */
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-/* ===== HEADER ===== */
+    .login-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(24px);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 24px 40px -8px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-.header{
-  background:white;
-  padding:15px 20px;
-  border-radius:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 4px 10px rgba(0,0,0,.06);
-  margin-bottom:20px;
-}
+    .login-box h2 {
+      margin-top: 0;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-.header button{
-  background:#ef4444;
-  color:white;
-  border:none;
-  padding:8px 14px;
-  border-radius:6px;
-  cursor:pointer;
-}
+    .login-box input {
+      width: 100%;
+      padding: 14px;
+      margin: 16px 0;
+      border-radius: 12px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      color: white;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: 0.3s;
+    }
 
+    .login-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    }
 
-/* ===== FILTER ===== */
+    .login-box button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 16px;
+    }
 
-.filter-box{
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,.06);
-  margin-bottom:20px;
+    .login-box button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -6px var(--accent-glow);
+    }
 
-  display:flex;
-  gap:15px;
-  flex-wrap:wrap;
-  align-items:center;
-}
+    #error {
+      color: var(--danger);
+      display: none;
+      margin-top: 16px;
+      font-weight: 500;
+      font-size: 14px;
+    }
 
-.filter-box input{
-  padding:8px;
-  border:1px solid #cbd5e1;
-  border-radius:6px;
-}
+    /* Dashboard Common */
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 24px;
+    }
 
-.filter-box button{
-  padding:8px 14px;
-  background:#22c55e;
-  border:none;
-  color:white;
-  border-radius:6px;
-  cursor:pointer;
-}
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.filter-box button:hover{
-  background:#16a34a;
-}
+    .header h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
+    .header button {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-/* ===== TABLE ===== */
+    .header button:hover {
+      background: var(--danger);
+      color: white;
+      transform: translateY(-1px);
+    }
 
-.table-box{
-  background:white;
-  padding:15px;
-  border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,.08);
-  overflow:auto;
-}
+    /* Filter Box */
+    .filter-box {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:14px;
-}
+    .filter-box label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-th,td{
-  padding:10px;
-  border-bottom:1px solid #e5e7eb;
-}
+    .filter-box input {
+      padding: 10px 14px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: white;
+      outline: none;
+      transition: 0.3s;
+      font-family: inherit;
+    }
 
-th{
-  background:#f1f5f9;
-  position:sticky;
-  top:0;
-}
+    .filter-box input:focus {
+      border-color: var(--accent);
+    }
 
-</style>
+    .filter-box button {
+      padding: 10px 18px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+      margin-left: auto;
+    }
+
+    .filter-box button:hover {
+      background: var(--success);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    /* Stats */
+    .stats-box {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 24px;
+      flex: 1;
+      text-align: center;
+      min-width: 140px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+    }
+
+    .stat-card:nth-child(1)::before {
+      background: linear-gradient(90deg, transparent, #4f46e5, transparent);
+    }
+
+    .stat-card:nth-child(2)::before {
+      background: linear-gradient(90deg, transparent, #10b981, transparent);
+    }
+
+    .stat-card:nth-child(3)::before {
+      background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+    }
+
+    .stat-card b {
+      display: block;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: white;
+    }
+
+    .stat-card span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Active Sessions Admin Box */
+    #activeUsersAdminBox {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    #activeUsersAdminBox h3 {
+      margin: 0 0 16px 0;
+      color: #fca5a5;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #activeUsersAdminBox h3::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--danger);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--danger);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.5;
+      }
+    }
+
+    .active-user-item {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .active-user-item b {
+      font-size: 15px;
+      color: white;
+      display: block;
+    }
+
+    .active-user-item span {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .active-user-item button {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: auto;
+      transition: 0.3s;
+    }
+
+    .active-user-item button:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* Table */
+    .table-box {
+      overflow-x: auto;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 16px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--table-border);
+    }
+
+    th.sortable {
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    th.sortable:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--table-border);
+      color: #e2e8f0;
+      vertical-align: top;
+    }
+
+    tbody tr {
+      transition: 0.2s;
+    }
+
+    tbody tr:hover {
+      background: var(--table-hover);
+    }
+
+    .type-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .type-checkin {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .type-checkout {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    .type-other {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .delete-btn {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--table-border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: 0.3s;
+    }
+
+    .delete-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    #loadingMessage {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-dim);
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+    @keyframes slideUpFade {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Flatpickr Custom Glassmorphism Theme */
+    .flatpickr-calendar {
+      background: rgba(20, 20, 22, 0.85) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 24px 40px -8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(79, 70, 229, 0.15) !important;
+      color: #f8fafc !important;
+      font-family: inherit !important;
+      padding: 10px !important;
+    }
+
+    .flatpickr-months .flatpickr-month {
+      background: transparent !important;
+      color: #f8fafc !important;
+      fill: #f8fafc !important;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+      background: #141416 !important;
+      color: #f8fafc !important;
+    }
+
+    span.flatpickr-weekday {
+      color: #94a3b8 !important;
+      font-weight: 600 !important;
+    }
+
+    .flatpickr-day {
+      color: #f8fafc !important;
+      border-radius: 12px !important;
+      border: 1px solid transparent !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .flatpickr-day:hover:not(.selected) {
+      background: rgba(255, 255, 255, 0.1) !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+      transform: scale(1.05);
+    }
+
+    .flatpickr-day.selected {
+      background: #4f46e5 !important;
+      border-color: #4f46e5 !important;
+      color: white !important;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4) !important;
+      font-weight: bold;
+    }
+
+    .flatpickr-day.today {
+      border-color: rgba(14, 165, 233, 0.5) !important;
+    }
+
+    .flatpickr-calendar.arrowTop:after,
+    .flatpickr-calendar.arrowTop:before,
+    .flatpickr-calendar.arrowBottom:after,
+    .flatpickr-calendar.arrowBottom:before {
+      display: none !important;
+    }
+
+    .flatpickr-input[readonly] {
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.3) !important;
+    }
+  </style>
 </head>
 
 <body>
 
-
-<!-- ========== LOGIN ========== -->
-
-<div id="loginPage" class="login-box">
-
-<h2>🔐 Admin Login</h2>
-
-<input type="password" id="password" placeholder="Password">
-
-<button onclick="login()">Login</button>
-
-<p id="error">Wrong password ❌</p>
-
-</div>
-
-
-<!-- ========== DASHBOARD ========== -->
-
-<div id="dashboard" class="hidden">
-
-<div class="container">
-
-
-<!-- HEADER -->
-
-<div class="header">
-
-<h2>📊 Report Admin Panel</h2>
-
-<button onclick="logout()">Logout</button>
-
-</div>
-
-
-<!-- FILTER -->
-
-<div class="filter-box">
-
-<label>From:</label>
-<input type="date" id="fromDate">
-
-<label>To:</label>
-<input type="date" id="toDate">
-
-<button onclick="applyFilter()">Filter</button>
-
-<button onclick="downloadMD()">⬇ Download Summary (.md)</button>
-
-</div>
-
-
-<!-- TABLE -->
-
-<div class="table-box">
-
-<table id="dataTable">
-
-<thead>
-<tr>
-<th>Type</th>
-<th>Name</th>
-<th>Table</th>
-<th>Work</th>
-<th>Date</th>
-<th>Time</th>
-<th>Clean</th>
-<th>CCTV</th>
-<th>Waste</th>
-<th>Net</th>
-<th>Work Done</th>
-<th>Day Feedback</th>
-<th>Floor</th>
-<th>Cable</th>
-<th>Tools</th>
-<th>Timestamp</th>
-</tr>
-</thead>
-
-<tbody></tbody>
-
-</table>
-
-</div>
-
-
-</div>
-</div>
-
-
-<script>
-
-/* ===== CONFIG ===== */
-
-const PASSWORD = "report0816";
-
-const SHEET_ID =
-"1_7g_XuKW0TnjV2no4it9lrljoViP-ID1YlsQvsKQs2M";
-
-
-let allData = [];
-
-
-// ===== LOGIN =====
-
-function login(){
-
-  if(document.getElementById("password").value===PASSWORD){
-
-    localStorage.setItem("admin","true");
-
-    showDashboard();
-
-  }else{
-
-    document.getElementById("error").style.display="block";
-
-  }
-}
-
-
-function logout(){
-
-  localStorage.removeItem("admin");
-  location.reload();
-
-}
-
-
-
-// ===== SHOW DASHBOARD =====
-
-function showDashboard(){
-
-  document.getElementById("loginPage").style.display="none";
-  document.getElementById("dashboard").classList.remove("hidden");
-
-  loadData();
-
-}
-
-
-
-// ===== GOOGLE DATE =====
-
-function parseGoogleDate(val){
-
-  if(!val || !val.startsWith("Date(")) return null;
-
-  let n = val.match(/\d+/g).map(Number);
-
-  return new Date(n[0],n[1],n[2],n[3]||0,n[4]||0,n[5]||0);
-}
-
-
-
-function formatDate(val){
-
-  let d = parseGoogleDate(val);
-  if(!d) return "";
-
-  return d.toLocaleDateString();
-}
-
-
-function formatTime(val){
-
-  let d = parseGoogleDate(val);
-  if(!d) return "";
-
-  return d.toLocaleTimeString([],{
-    hour:'2-digit',
-    minute:'2-digit'
-  });
-}
-
-
-
-// ===== LOAD DATA =====
-
-function loadData(){
-
-  let url =
-`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-
-  fetch(url)
-  .then(r=>r.text())
-  .then(text=>{
-
-    let json = JSON.parse(
-      text.replace("/*O_o*/","")
-          .replace("google.visualization.Query.setResponse(","")
-          .slice(0,-2)
-    );
-
-    let cols = json.table.cols.map(c=>c.label.toLowerCase());
-
-    let rows = json.table.rows.map(r=>r.c.map(x=>x?x.v:""));
-
-    allData = rows.map(r=>{
-      let o={};
-      cols.forEach((k,i)=>o[k]=r[i]);
-      return o;
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <!-- ========== LOGIN ========== -->
+  <div class="login-wrapper" id="loginPage">
+    <div class="login-box">
+      <h2>Admin Login</h2>
+      <br>
+      <input type="password" id="password" placeholder="Enter Secure Password"
+        onkeypress="if(event.key === 'Enter') login()">
+      <button onclick="login()">Access Dashboard</button>
+      <p id="error">Invalid Credentials</p>
+    </div>
+  </div>
+
+  <!-- ========== DASHBOARD ========== -->
+  <div id="dashboard" class="hidden">
+    <div class="container">
+
+      <div class="glass-card header">
+        <h2>📊 Intelligence Dashboard</h2>
+        <button onclick="logout()">Terminate Session</button>
+      </div>
+
+      <div class="glass-card filter-box">
+        <label>From:</label>
+        <input type="date" id="fromDate" onchange="applyFilter()">
+        <label>To:</label>
+        <input type="date" id="toDate" onchange="applyFilter()">
+        <label>Search:</label>
+        <input type="text" id="searchInput" placeholder="Name, Table, Work..." onkeyup="applyFilter()">
+        <div style="margin-left: auto; display: flex; gap: 8px;">
+          <button onclick="downloadCSV()"
+            style="background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.3); color: var(--accent-secondary);">⬇
+            Export CSV</button>
+          <button onclick="downloadMD()" style="margin-left: 0;">⬇ Export .md</button>
+        </div>
+      </div>
+
+      <div class="stats-box" id="statsBox" style="display:none;">
+        <div class="stat-card">
+          <b id="statTotal">0</b>
+          <span>Total Logs</span>
+        </div>
+        <div class="stat-card">
+          <b id="statCheckIn">0</b>
+          <span>Check-Ins</span>
+        </div>
+        <div class="stat-card">
+          <b id="statCheckOut">0</b>
+          <span>Check-Outs</span>
+        </div>
+      </div>
+
+      <div id="activeUsersAdminBox" class="glass-card" style="display:none;">
+        <h3>Active Sessions (Pending Check-Out)</h3>
+        <div id="activeAdminList" style="display:flex; gap:12px; flex-direction:column; width: 100%;"></div>
+      </div>
+
+      <!-- Charts Container -->
+      <div id="chartsContainer"
+        style="display:none; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 24px;">
+        <div class="glass-card" style="margin-bottom: 0;">
+          <h3 style="margin-top:0; font-size: 16px; color: var(--text-dim); text-align: center;">Weekly Trends (Last 7
+            Days)</h3>
+          <canvas id="weeklyChart"></canvas>
+        </div>
+        <div class="glass-card" style="margin-bottom: 0;">
+          <h3 style="margin-top:0; font-size: 16px; color: var(--text-dim); text-align: center;">Table Utilization</h3>
+          <canvas id="tableChart"></canvas>
+        </div>
+        <div class="glass-card" style="margin-bottom: 0;">
+          <h3 style="margin-top:0; font-size: 16px; color: var(--text-dim); text-align: center;">Peak Hours</h3>
+          <canvas id="timeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="glass-card table-box">
+        <div id="loadingMessage" style="display:none;">
+          <div style="font-size: 24px; margin-bottom: 12px; animation: float 2s infinite;">⏳</div>
+          Synchronizing Database...
+        </div>
+        <table id="dataTable" style="display:none;">
+          <thead>
+            <tr>
+              <th class="sortable" onclick="sortTable('type')">Type &#8597;</th>
+              <th class="sortable" onclick="sortTable('name')">Name &#8597;</th>
+              <th class="sortable" onclick="sortTable('table')">Table &#8597;</th>
+              <th>Work Segment</th>
+              <th class="sortable" onclick="sortTable('date')">Date &#8597;</th>
+              <th class="sortable" onclick="sortTable('time')">Time &#8597;</th>
+              <th>Clean</th>
+              <th>CCTV</th>
+              <th>Waste</th>
+              <th>Net</th>
+              <th>Work Done</th>
+              <th>Day Feedback</th>
+              <th>Floor</th>
+              <th>Cable</th>
+              <th>Tools</th>
+              <th>Timestamp</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script>
+    const PASSWORD = "report0816";
+    const SHEET_ID = "1_7g_XuKW0TnjV2no4it9lrljoViP-ID1YlsQvsKQs2M";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxBGajs2FUr2Nt-swwRW5jK4J_-WSZWtRu1VSgHm8HSPXXwJIy6NRxGEwSdfzX9M_ruYA/exec";
+    let allData = [];
+
+    function renderActiveAdmin() {
+      let deletedLogs = JSON.parse(localStorage.getItem("deletedLogs") || "[]");
+      let latest = {};
+      allData.forEach(r => {
+        let uniqueId = r.name + "_" + r.timestamp;
+        if (r.name && !deletedLogs.includes(uniqueId)) latest[r.name] = r;
+      });
+      let activeUsers = Object.values(latest).filter(r => r.type === "checkin");
+
+      let activeBox = document.getElementById("activeUsersAdminBox");
+      let activeList = document.getElementById("activeAdminList");
+      if (!activeBox || !activeList) return;
+
+      if (activeUsers.length > 0) {
+        activeBox.style.display = "flex";
+        activeList.innerHTML = "";
+        activeUsers.forEach(u => {
+          let div = document.createElement("div");
+          div.className = "active-user-item";
+          div.innerHTML = `
+                        <div>
+                            <b>${u.name}</b>
+                            <span>${u.table} | In: ${formatTime(u.time)}</span>
+                        </div>
+                        <button onclick="forceCheckout(this, '${u.name.replace(/'/g, "\\'")}', '${u.table.replace(/'/g, "\\'")}')">Force Terminate</button>
+                    `;
+          activeList.appendChild(div);
+        });
+      } else {
+        activeBox.style.display = "none";
+      }
+    }
+
+    async function forceCheckout(btn, name, table) {
+      if (!confirm(`Force checkout ${name}?`)) return;
+      btn.innerText = "Processing...";
+      btn.disabled = true;
+
+      const now = new Date();
+      const dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
+      const timeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
+      const data = {
+        type: "checkout", name: name, table: table || "Unknown",
+        work: "System Force Checkout", date: dateStr, time: timeStr,
+        cleaned: "N/A", cctv: "Yes", waste: "Yes", internet: "Yes",
+        done: "System Administrator Force Checkout", day: "System Automated Event",
+        floor: "Yes", tools: "Yes", cable: "Yes"
+      };
+
+      try {
+        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
+        setTimeout(() => { loadData(); }, 1200);
+      } catch (e) {
+        alert("Failed to force checkout.");
+        btn.innerText = "Force Terminate";
+        btn.disabled = false;
+      }
+    }
+
+    function login() {
+      if (document.getElementById("password").value === PASSWORD) {
+        localStorage.setItem("admin", "true");
+        showDashboard();
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("admin");
+      location.reload();
+    }
+
+    function showDashboard() {
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("dashboard").classList.remove("hidden");
+      loadData();
+    }
+
+    function parseGoogleDate(val) {
+      if (!val || !val.startsWith("Date(")) return null;
+      let n = val.match(/\d+/g).map(Number);
+      return new Date(n[0], n[1], n[2], n[3] || 0, n[4] || 0, n[5] || 0);
+    }
+
+    function formatDate(val) {
+      let d = parseGoogleDate(val);
+      return d ? d.toLocaleDateString() : "";
+    }
+
+    function formatTime(val) {
+      if (!val) return "";
+      let n = val.match(/\d+/g);
+      if (!n || n.length < 4) return val;
+      let d = new Date(n[0], n[1], n[2], n[3] || 0, n[4] || 0, n[5] || 0);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function generateMD() {
+      let fData = window.filteredData || [];
+      if (fData.length === 0) return "No records found.";
+      let md = "# 📊 Core System Alpha - Activity Log\n\n";
+      md += `**Date Range:** ${document.getElementById("fromDate").value || 'All'} to ${document.getElementById("toDate").value || 'All'}\n`;
+      md += `**Total Records:** ${fData.length}\n\n`;
+
+      md += "| Type | Name | Table | Work/Summary | Date | Time | Timestamp |\n";
+      md += "|---|---|---|---|---|---|---|\n";
+
+      fData.forEach(r => {
+        let t = r.type === "checkin" ? "🟢 IN" : (r.type === "checkout" ? "🟠 OUT" : "⚪ MISC");
+        let w = (r.work || "").replace(/\|/g, "-").substring(0, 30);
+        let ts = parseGoogleDate(r.timestamp) ? parseGoogleDate(r.timestamp).toLocaleString() : r.timestamp;
+        md += `| ${t} | ${r.name} | ${r.table} | ${w} | ${formatDate(r.date)} | ${formatTime(r.time)} | ${ts} |\n`;
+      });
+      return md;
+    }
+
+    function downloadMD() {
+      if (!window.filteredData || window.filteredData.length === 0) {
+        alert("No data to export."); return;
+      }
+      const text = generateMD();
+      const blob = new Blob([text], { type: "text/markdown" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `CoreLog_${new Date().toISOString().split('T')[0]}.md`;
+      a.click();
+    }
+
+    function downloadCSV() {
+      if (!window.filteredData || window.filteredData.length === 0) {
+        alert("No data to export."); return;
+      }
+
+      const headers = ["Type", "Name", "Table", "Work Plan/Summary", "Date", "Time", "Clean", "CCTV", "Waste", "Internet", "Detailed Work", "Feedback", "Floor", "Cable", "Tools", "Timestamp"];
+
+      let csvContent = headers.join(",") + "\n";
+
+      window.filteredData.forEach(r => {
+        const row = [
+          r.type, r.name, r.table, r.work, formatDate(r.date), formatTime(r.time), r.cleaned, r.cctv, r.waste, r.internet, r.done, r.day, r.floor, r.cable, r.tools, r.timestamp
+        ];
+
+        // Escape quotes and wrap in quotes to handle commas in text
+        const mappedRow = row.map(cell => {
+          let cellStr = cell ? String(cell) : "";
+          cellStr = cellStr.replace(/"/g, '""');
+          if (cellStr.includes(',') || cellStr.includes('\n') || cellStr.includes('"')) {
+            return `"${cellStr}"`;
+          }
+          return cellStr;
+        });
+
+        csvContent += mappedRow.join(",") + "\n";
+      });
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `CoreLog_Export_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    // Chart.js Instances
+    let weeklyChartInstance = null;
+    let tableChartInstance = null;
+    let timeChartInstance = null;
+
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+    function generateCharts(data) {
+      if (!data || data.length === 0) {
+        document.getElementById('chartsContainer').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('chartsContainer').style.display = 'grid';
+
+      // 1. Weekly Trends (Last 7 days Check-ins vs Check-outs)
+      let datesMap = {};
+      let today = new Date();
+      today.setHours(0, 0, 0, 0);
+      for (let i = 6; i >= 0; i--) {
+        let d = new Date(today);
+        d.setDate(d.getDate() - i);
+        datesMap[d.toLocaleDateString()] = { in: 0, out: 0 };
+      }
+
+      // 2. Table Utilization
+      let tableCounts = {};
+
+      // 3. Peak Hours
+      let hourCounts = Array(24).fill(0);
+
+      data.forEach(r => {
+        let dateStr = formatDate(r.date);
+        if (datesMap[dateStr] !== undefined) {
+          if (r.type === 'checkin') datesMap[dateStr].in++;
+          if (r.type === 'checkout') datesMap[dateStr].out++;
+        }
+
+        if (r.table) {
+          let n = String(r.table).toLowerCase().trim();
+          let normalized = r.table.trim();
+
+          if (n === '1' || n === 'table 1' || n === 'table1') normalized = 'Table 1';
+          else if (n === '2' || n === 'table 2' || n === 'table2') normalized = 'Table 2';
+          else if (n === '3' || n === 'table 3' || n === 'table3') normalized = 'Table 3';
+          else if (n === '4' || n === 'table 4' || n === 'table4') normalized = 'Table 4';
+          else if (n === '5' || n === 'table 5' || n === 'table5') normalized = 'Table 5';
+          else if (n === '6' || n === 'table 6' || n === 'table6') normalized = 'Table 6';
+          else if (n === 'a' || n === 'table a' || n === 'tablea') normalized = 'Table A';
+          else if (n === 'b' || n === 'table b' || n === 'tableb') normalized = 'Table B';
+          else if (n.includes('main')) normalized = 'Main Desk';
+          else if (n.includes('corner')) normalized = 'Corner Desk';
+          else if (n.includes('electronic')) normalized = 'Electronics Bench';
+          else if (n.includes('studio')) normalized = 'Studio';
+          else if (n === 'no' || n === 'none' || n === 'na') normalized = 'None';
+          else normalized = n.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); // Capitalize fallback
+
+          tableCounts[normalized] = (tableCounts[normalized] || 0) + 1;
+        }
+
+        let t = formatTime(r.time);
+        if (t && r.type === 'checkin') {
+          // simple parse AM/PM or 24hr
+          let d = new Date("2000-01-01 " + t);
+          if (!isNaN(d)) {
+            let h = d.getHours();
+            hourCounts[h]++;
+          }
+        }
+      });
+
+      // Render Weekly Chart
+      const ctxWeekly = document.getElementById('weeklyChart').getContext('2d');
+      if (weeklyChartInstance) weeklyChartInstance.destroy();
+      weeklyChartInstance = new Chart(ctxWeekly, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(datesMap).map(d => d.substring(0, 5)),
+          datasets: [
+            { label: 'Check-In', backgroundColor: '#10b981', data: Object.values(datesMap).map(v => v.in), borderRadius: 4 },
+            { label: 'Check-Out', backgroundColor: '#f59e0b', data: Object.values(datesMap).map(v => v.out), borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      // Render Table Chart
+      const ctxTable = document.getElementById('tableChart').getContext('2d');
+      if (tableChartInstance) tableChartInstance.destroy();
+      tableChartInstance = new Chart(ctxTable, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(tableCounts),
+          datasets: [{
+            data: Object.values(tableCounts),
+            backgroundColor: ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'],
+            borderWidth: 0, hoverOffset: 4
+          }]
+        },
+        options: { responsive: true, cutout: '70%', plugins: { legend: { position: 'right' } } }
+      });
+
+      // Render Time Chart
+      const ctxTime = document.getElementById('timeChart').getContext('2d');
+      if (timeChartInstance) timeChartInstance.destroy();
+
+      // simplify labels to active hours only to avoid empty chart spanning midnight
+      let labels = []; let hData = [];
+      for (let i = 0; i < 24; i++) {
+        labels.push(i + ":00");
+        hData.push(hourCounts[i]);
+      }
+
+      timeChartInstance = new Chart(ctxTime, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Check-ins',
+            data: hData,
+            borderColor: '#0ea5e9',
+            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { ticks: { maxTicksLimit: 8 } } },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function loadData() {
+      document.getElementById("loadingMessage").style.display = "block";
+      document.getElementById("dataTable").style.display = "none";
+
+      let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+      fetch(url).then(r => r.text()).then(text => {
+        document.getElementById("loadingMessage").style.display = "none";
+        document.getElementById("dataTable").style.display = "table";
+
+        let json = JSON.parse(text.replace("/*O_o*/", "").replace("google.visualization.Query.setResponse(", "").slice(0, -2));
+        let cols = json.table.cols.map(c => c.label.toLowerCase());
+        let rows = json.table.rows.map(r => r.c.map(x => x ? x.v : ""));
+
+        allData = rows.map(r => {
+          let o = {};
+          cols.forEach((k, i) => o[k] = r[i]);
+          return o;
+        });
+
+        renderActiveAdmin();
+        applyFilter();
+      });
+    }
+
+    function renderTable(data) {
+      document.getElementById("statsBox").style.display = "flex";
+      document.getElementById("statTotal").innerText = data.length;
+      document.getElementById("statCheckIn").innerText = data.filter(d => d.type === "checkin").length;
+      document.getElementById("statCheckOut").innerText = data.filter(d => d.type === "checkout").length;
+
+      generateCharts(data); // Call generate charts when table is rendered
+
+      let body = document.querySelector("#dataTable tbody");
+      body.innerHTML = "";
+
+      data.forEach(r => {
+        let tr = document.createElement("tr");
+        let badgeClass = r.type === 'checkin' ? 'type-checkin' : (r.type === 'checkout' ? 'type-checkout' : 'type-other');
+        tr.innerHTML = `
+                    <td><span class="type-badge ${badgeClass}">${r.type || ""}</span></td>
+                    <td style="font-weight:600;">${r.name || ""}</td>
+                    <td>${r.table || ""}</td>
+                    <td>${r.work || ""}</td>
+                    <td>${formatDate(r.date)}</td>
+                    <td>${formatTime(r.time)}</td>
+                    <td>${r.cleaned || ""}</td>
+                    <td>${r.cctv || ""}</td>
+                    <td>${r.waste || ""}</td>
+                    <td>${r.internet || ""}</td>
+                    <td><div style="max-height:60px; overflow:hidden; text-overflow:ellipsis;" title="${r.workdone || ""}">${r.workdone || ""}</div></td>
+                    <td>${r.dayfeedback || ""}</td>
+                    <td>${r.floorclean || ""}</td>
+                    <td>${r.cablesafe || ""}</td>
+                    <td>${r.toolsreturned || ""}</td>
+                    <td style="color:var(--text-dim); font-size:12px;">${formatDate(r.timestamp)}<br>${formatTime(r.timestamp)}</td>
+                    <td>
+                        <button class="delete-btn" onclick="softDelete('${(r.name || "").replace(/'/g, "\\'")}', '${r.timestamp}')">Delete</button>
+                    </td>
+                `;
+        body.appendChild(tr);
+      });
+    }
+
+    function applyFilter() {
+      let f = document.getElementById("fromDate").value;
+      let t = document.getElementById("toDate").value;
+      let s = (document.getElementById("searchInput").value || "").toLowerCase();
+      let deletedLogs = JSON.parse(localStorage.getItem("deletedLogs") || "[]");
+
+      let filtered = allData.filter(r => !deletedLogs.includes(r.name + "_" + r.timestamp));
+
+      if (f && t) {
+        let from = new Date(f); let to = new Date(t); to.setHours(23, 59, 59);
+        filtered = filtered.filter(r => {
+          let d = parseGoogleDate(r.date);
+          return d && d >= from && d <= to;
+        });
+      }
+
+      if (s) {
+        filtered = filtered.filter(r => {
+          return (r.name || "").toLowerCase().includes(s) ||
+            (r.table || "").toLowerCase().includes(s) ||
+            (r.work || "").toLowerCase().includes(s);
+        });
+      }
+
+      window.filteredData = filtered; // Save globally for exports
+      renderTable(filtered);
+    }
+
+    let sortCol = null; let sortAsc = true;
+    function sortTable(col) {
+      if (sortCol === col) sortAsc = !sortAsc;
+      else { sortCol = col; sortAsc = true; }
+
+      allData.sort((a, b) => {
+        let v1 = a[col] || ""; let v2 = b[col] || "";
+        if (col === "date" || col === "timestamp") {
+          v1 = parseGoogleDate(v1) || new Date(0);
+          v2 = parseGoogleDate(v2) || new Date(0);
+          return sortAsc ? v1 - v2 : v2 - v1;
+        }
+        v1 = String(v1).toLowerCase(); v2 = String(v2).toLowerCase();
+        if (v1 < v2) return sortAsc ? -1 : 1;
+        if (v1 > v2) return sortAsc ? 1 : -1;
+        return 0;
+      });
+      applyFilter();
+    }
+
+    function downloadMD() {
+      let f = document.getElementById("fromDate").value;
+      let t = document.getElementById("toDate").value;
+      let data = allData;
+
+      if (f && t) {
+        let from = new Date(f); let to = new Date(t); to.setHours(23, 59, 59);
+        data = allData.filter(r => { let d = parseGoogleDate(r.date); return d && d >= from && d <= to; });
+      }
+
+      if (data.length === 0) { alert("No data found"); return; }
+      let checkin = data.filter(r => r.type === "checkin").length;
+      let checkout = data.filter(r => r.type === "checkout").length;
+
+      let md = `# 📊 Intelligence Report\n\n## 📅 Period\nFrom: ${f || "All"}\nTo: ${t || "All"}\n\n---\n\n## 📈 Summary\n- Total Reports: ${data.length}\n- Check Ins: ${checkin}\n- Check Outs: ${checkout}\n\n---\n\n## 📋 Details\n\n`;
+
+      data.forEach((r, i) => {
+        md += `### ${i + 1}. ${r.name} (${(r.type || "").toUpperCase()})\n\n- Table: ${r.table}\n- Work: ${r.work}\n- Date: ${formatDate(r.date)}\n- Time: ${formatTime(r.time)}\n\n- Cleaned: ${r.cleaned}\n- CCTV: ${r.cctv}\n- Waste: ${r.waste}\n- Internet: ${r.internet}\n\n- Work Done: ${r.workdone}\n- Day Feedback: ${r.dayfeedback}\n\n- Floor: ${r.floorclean}\n- Cable: ${r.cablesafe}\n- Tools: ${r.toolsreturned}\n\n---\n\n`;
+      });
+
+      let blob = new Blob([md], { type: "text/markdown" });
+      let a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `report_${f || "all"}_to_${t || "all"}.md`;
+      a.click();
+    }
+
+    function softDelete(name, timestamp) {
+      if (!confirm(`Confirm deletion of log for ${name}?`)) return;
+      let uniqueId = name + "_" + timestamp;
+      let deletedLogs = JSON.parse(localStorage.getItem("deletedLogs") || "[]");
+      if (!deletedLogs.includes(uniqueId)) {
+        deletedLogs.push(uniqueId);
+        localStorage.setItem("deletedLogs", JSON.stringify(deletedLogs));
+      }
+      applyFilter();
+      renderActiveAdmin();
+    }
+
+    if (localStorage.getItem("admin") === "true") showDashboard();
+
+    // Initialize Flatpickr for Admin Date Filters
+    window.addEventListener('load', () => {
+      flatpickr("#fromDate, #toDate", {
+        dateFormat: "Y-m-d",
+        disableMobile: "true",
+        animate: true,
+        onChange: function (selectedDates, dateStr, instance) {
+          applyFilter();
+        }
+      });
     });
-
-    fillTable(allData);
-
-  });
-
-}
-
-
-
-// ===== TABLE =====
-
-function fillTable(data){
-
-  let body =
-    document.querySelector("#dataTable tbody");
-
-  body.innerHTML="";
-
-  data.forEach(r=>{
-
-    let tr = document.createElement("tr");
-
-    tr.innerHTML=`
-      <td>${r.type||""}</td>
-      <td>${r.name||""}</td>
-      <td>${r.table||""}</td>
-      <td>${r.work||""}</td>
-
-      <td>${formatDate(r.date)}</td>
-      <td>${formatTime(r.time)}</td>
-
-      <td>${r.cleaned||""}</td>
-      <td>${r.cctv||""}</td>
-      <td>${r.waste||""}</td>
-      <td>${r.internet||""}</td>
-
-      <td>${r.workdone||""}</td>
-      <td>${r.dayfeedback||""}</td>
-
-      <td>${r.floorclean||""}</td>
-      <td>${r.cablesafe||""}</td>
-      <td>${r.toolsreturned||""}</td>
-
-      <td>${formatDate(r.timestamp)} ${formatTime(r.timestamp)}</td>
-    `;
-
-    body.appendChild(tr);
-
-  });
-
-}
-
-
-
-// ===== FILTER =====
-
-function applyFilter(){
-
-  let f = document.getElementById("fromDate").value;
-  let t = document.getElementById("toDate").value;
-
-  if(!f || !t){
-    fillTable(allData);
-    return;
-  }
-
-  let from = new Date(f);
-  let to = new Date(t);
-
-  to.setHours(23,59,59);
-
-  let filtered = allData.filter(r=>{
-
-    let d = parseGoogleDate(r.date);
-
-    if(!d) return false;
-
-    return d>=from && d<=to;
-
-  });
-
-  fillTable(filtered);
-
-}
-
-
-
-// ===== DOWNLOAD MARKDOWN =====
-
-function downloadMD(){
-
-  let f = document.getElementById("fromDate").value;
-  let t = document.getElementById("toDate").value;
-
-  let data = allData;
-
-  if(f && t){
-
-    let from = new Date(f);
-    let to = new Date(t);
-    to.setHours(23,59,59);
-
-    data = allData.filter(r=>{
-      let d = parseGoogleDate(r.date);
-      return d && d>=from && d<=to;
-    });
-  }
-
-
-  if(data.length===0){
-    alert("No data found");
-    return;
-  }
-
-
-  let checkin = data.filter(r=>r.type==="checkin").length;
-  let checkout = data.filter(r=>r.type==="checkout").length;
-
-
-  let md = `# 📊 Curiosity Weekends Report
-
-## 📅 Period
-From: ${f||"All"}
-To: ${t||"All"}
-
----
-
-## 📈 Summary
-
-- Total Reports: ${data.length}
-- Check Ins: ${checkin}
-- Check Outs: ${checkout}
-
----
-
-## 📋 Details
-
-`;
-
-
-  data.forEach((r,i)=>{
-
-    md += `
-### ${i+1}. ${r.name} (${r.type.toUpperCase()})
-
-- Table: ${r.table}
-- Work: ${r.work}
-- Date: ${formatDate(r.date)}
-- Time: ${formatTime(r.time)}
-
-- Cleaned: ${r.cleaned}
-- CCTV: ${r.cctv}
-- Waste: ${r.waste}
-- Internet: ${r.internet}
-
-- Work Done: ${r.workdone}
-- Day Feedback: ${r.dayfeedback}
-
-- Floor: ${r.floorclean}
-- Cable: ${r.cablesafe}
-- Tools: ${r.toolsreturned}
-
----
-
-`;
-  });
-
-
-  let blob = new Blob([md],{type:"text/markdown"});
-
-  let a = document.createElement("a");
-
-  a.href = URL.createObjectURL(blob);
-
-  a.download =
-    `report_${f||"all"}_to_${t||"all"}.md`;
-
-  a.click();
-
-}
-
-
-
-// ===== AUTO LOGIN =====
-
-if(localStorage.getItem("admin")==="true"){
-  showDashboard();
-}
-
-</script>
-
+  </script>
 </body>
+
 </html>
